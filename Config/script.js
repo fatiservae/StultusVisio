@@ -110,7 +110,7 @@
     }
 
     function resizeMarcador() {
-      if (tamanhoMarcador > 250) {tamanhoMarcador = 5} else {tamanhoMarcador = tamanhoMarcador + 5};
+      if (tamanhoMarcador > 250) {tamanhoMarcador = 1} else {tamanhoMarcador = tamanhoMarcador + 5};
       circle.style.width = tamanhoMarcador + 'px';
       circle.style.height = tamanhoMarcador + 'px';
     }

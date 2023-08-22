@@ -1,3 +1,19 @@
+//    This file is part of StultusVisio.
+//
+//    StultusVisio is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    StultusVisio is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
+//    Jefferson T. @ 2023. Telegram: StalinCCCP
+
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 use lib::*;
@@ -56,8 +72,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else if line.starts_with(".urlvideo"){
             body.push_str(close_last_handle(&handle));
             let input = trim_element(&line); 
-            body.push_str(&format!("<iframe width=\"560\" height=\"315\" src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\">", input));
-            //body.push_str(&format!("<video controls src=\"{}\" >", input));
+            body.push_str(&format!(
+             "<div class=\"diviframe\"><iframe src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\" >", 
+             input)
+            );
             handle = Some(URLVideo);
 
         } else if line.starts_with(".list"){
