@@ -1,0 +1,17 @@
+.foot Jefferson Torres @ ESCS 2023
+.title Teste
+.logo ./Config/logo.png
+.css ./Config/style.css
+---
+.heading Roteiro
+.ordlist
+Estatísticas.
+Entender os acidentes: sufocação, trânsito e afogamento.
+Medidas de prevenção.
+Abusos e violência.
+
+---
+.image ./Images/situacao-geral.png
+
+---
+.video ./Videos/casa-segura.mp4
