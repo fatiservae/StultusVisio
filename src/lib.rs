@@ -5,6 +5,7 @@ pub enum Handle {
     Caption,
     Image,
     Video,
+    URLVideo,
     Text,
     Heading,
     SubHeading,
@@ -32,6 +33,7 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &str {
         Some(Handle::Heading) => "</h1>",
         Some(Handle::SubHeading) => "</h2>",
         Some(Handle::Video) => "</video>",
+        Some(Handle::URLVideo) => "</iframe>",
     }
 }
 
@@ -44,8 +46,8 @@ pub fn generate_script(script_path: Option<String>) -> String {
     match script_path {
         Some(script_path) => format!("<script src=\"{}\"></script>", script_path),
         None => "<script>    
-         var pages = document.querySelectorAll('.page');
-         var currentPageIndex = 0;
+         var slides = document.querySelectorAll('.slide');
+         var currentslideIndex = 0;
          var n = 0;
          
          const popup = document.getElementById(\"popup\");
@@ -53,7 +55,7 @@ pub fn generate_script(script_path: Option<String>) -> String {
 
          function popUpShow(){
              popupText.innerHTML = `<h1>Ajuda</h1>
-                          <h2>Slide ${currentPageIndex+1} de ${pages.length}</h2>
+                          <h2>Slide ${currentslideIndex+1} de ${slides.length}</h2>
                           <table>
                           <tr>
                             <th>Comando</th><th>Tecla</th>
@@ -82,27 +84,27 @@ pub fn generate_script(script_path: Option<String>) -> String {
          popUpShow();
 
          function Printar() {
-           for (var j = 0; j < pages.length; j++) {
-               pages[j].style.display= 'block';
+           for (var j = 0; j < slides.length; j++) {
+               slides[j].style.display= 'block';
            }
          };
 
          document.addEventListener('keydown', function(event) {
            if (event.key === 'ArrowRight' || event.key === 'j') {
-             if (currentPageIndex < pages.length - 1){
+             if (currentslideIndex < slides.length - 1){
                var contador = parseInt(n);
                if (contador === 0) {contador = contador + 1}
-               else if (contador > pages.length) {contador = 0};
-               currentPageIndex = currentPageIndex + contador;
+               else if (contador > slides.length) {contador = 0};
+               currentslideIndex = currentslideIndex + contador;
                n = 0;
              }
            }
            else if (event.key === 'ArrowLeft' || event.key === 'k'){
-             if (currentPageIndex > 0) {
+             if (currentslideIndex > 0) {
               var contador = parseInt(n);
               if (contador === 0) {contador = contador + 1};
-              currentPageIndex = currentPageIndex - contador;
-              if (currentPageIndex < 0 ){currentPageIndex = 0};
+              currentslideIndex = currentslideIndex - contador;
+              if (currentslideIndex < 0 ){currentslideIndex = 0};
               n = 0;
              }
            }
@@ -121,11 +123,11 @@ pub fn generate_script(script_path: Option<String>) -> String {
 
            else if (event.key === 'g'){
              document.addEventListener('keydown', function(event) {
-                if (event.key === 'g') {currentPageIndex = 0};
+                if (event.key === 'g') {currentslideIndex = 0};
              })
            }
            
-           else if (event.key === 'G') { currentPageIndex = pages.length - 1}
+           else if (event.key === 'G') { currentslideIndex = slides.length - 1}
 
            else if (event.key === 'm'){toggleMovement()}
 
@@ -135,11 +137,11 @@ pub fn generate_script(script_path: Option<String>) -> String {
 
            else {return};
 
-           for (var i = 0; i < pages.length; i++) {
-             if (i === currentPageIndex) {
-               pages[i].style.display = 'block';
+           for (var i = 0; i < slides.length; i++) {
+             if (i === currentslideIndex) {
+               slides[i].style.display = 'block';
              } else {
-               pages[i].style.display = 'none';
+               slides[i].style.display = 'none';
              }
            }
          });
@@ -211,8 +213,8 @@ pub fn generate_style(css_path: Option<String>) -> String {
     match css_path {
         Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
         None => "<style>@font-face {
-  font-family: 'SFPro';
-  src: url('./SF-Pro-Display-Medium.otf') format('opentype');
+  font-family: 'Arial';
+  /*src: url('./SF-Pro-Display-Medium.otf') format('opentype');*/
 }
 
 body {
@@ -258,19 +260,19 @@ body {
   text-align: center;
 }
 
-.page {
+.slide {
   position: relative;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
   max-height: 100vh; !important
-  page-break-after: always;
-  page-break-before: always;
+  slide-break-after: always;
+  slide-break-before: always;
   break-after: always;
 }
 
-.page p {
+.slide p {
   padding: 1em;
 }
 
@@ -294,7 +296,7 @@ ul, ol {
   justify-content: center; 
 }
 
-.page figure {
+.slide figure {
   object-fit: contain;
   display: flex;
   flex-direction: column;
@@ -305,7 +307,7 @@ ul, ol {
   border-radius: 10px 10px 10px 10px;
 }
 
-.page figure figcaption {
+.slide figure figcaption {
 /*  text-shadow: 2px 2px 4px rgba(3, 3, 3, 0.5);*/
   position: relative;
   bottom: 0em;
@@ -313,7 +315,7 @@ ul, ol {
   text-align: right;
 }
 
-.page figure img {
+.slide figure img {
   object-fit: contain;
   max-width: 100%;
   max-height: 100%;
@@ -325,7 +327,7 @@ img {
   border-radius: 10px 10px 10px 10px;
 }
 
-.page video {
+.slide video {
   width: 98vw;
   height: 98vh;
   object-fit: contain;
@@ -356,14 +358,14 @@ footer {
   color: black;
 }
 
-/* Mostra apenas a primeira página*/
-.page:nth-of-type(3){
+/* Mostra apenas a primeira página
+.slide:nth-of-type(1){
   display: block;
   background-image: url('capa.jpg');
   background-size: cover;
   background-position: center; 
 }
-
+*/
 .titulo {
   padding-top: 10vh;
   color: black; 

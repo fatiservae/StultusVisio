@@ -1,17 +1,37 @@
-.foot Jefferson Torres @ ESCS 2023
-.title Teste
+.title Apresentação
+.foot Um rodapé @ 2023
 .logo ./Config/logo.png
 .css ./Config/style.css
+.script ./Config/script.js
+
 ---
-.heading Roteiro
+.heading Exemplo de lista simples
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+
+---
+.heading Outro slide
 .ordlist
-Estatísticas.
-Entender os acidentes: sufocação, trânsito e afogamento.
-Medidas de prevenção.
-Abusos e violência.
+Este exemplo é de uma lista ordenada.
+Esta frase é propositalmente mais longa e conta com vírgulas, pontos e exclamação! Longa o suficiente para exibir a quebra de linha.
 
 ---
-.image ./Images/situacao-geral.png
+.image ./Images/exemplo.jpg
+.caption Uma legenda para imagem, 2020.
 
 ---
-.video ./Videos/casa-segura.mp4
+.video ./Videos/example.mp4
+
+---
+.urlvideo https://www.youtube.com/embed/F0lowv3DyfI?si=tzXa2XTlIQDgKza4
+
+---
+.heading Fim
+.list
+Sob licença GNU Public Licence version 3.
+By Jefferson T. 2023
+

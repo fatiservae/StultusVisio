@@ -1,5 +1,5 @@
-    var pages = document.querySelectorAll('.page');
-    var currentPageIndex = 0;
+    var slides = document.querySelectorAll('.slide');
+    var currentslideIndex = 0;
     var n = 0;
     
     const popup = document.getElementById("popup");
@@ -7,7 +7,7 @@
 
     function popUpShow(){
         popupText.innerHTML = `<h1>Ajuda</h1>
-                     <h2>Slide ${currentPageIndex+1} de ${pages.length}</h2>
+                     <h2>Slide ${currentslideIndex+1} de ${slides.length}</h2>
                      <table>
                      <tr>
                        <th>Comando</th><th>Tecla</th>
@@ -36,27 +36,27 @@
     popUpShow();
 
     function Printar() {
-      for (var j = 0; j < pages.length; j++) {
-          pages[j].style.display= 'block';
+      for (var j = 0; j < slides.length; j++) {
+          slides[j].style.display= 'block';
       }
     };
 
     document.addEventListener('keydown', function(event) {
       if (event.key === 'ArrowRight' || event.key === 'j') {
-        if (currentPageIndex < pages.length - 1){
+        if (currentslideIndex < slides.length - 1){
           var contador = parseInt(n);
           if (contador === 0) {contador = contador + 1}
-          else if (contador > pages.length) {contador = 0};
-          currentPageIndex = currentPageIndex + contador;
+          else if (contador > slides.length) {contador = 0};
+          currentslideIndex = currentslideIndex + contador;
           n = 0;
         }
       }
       else if (event.key === 'ArrowLeft' || event.key === 'k'){
-        if (currentPageIndex > 0) {
+        if (currentslideIndex > 0) {
          var contador = parseInt(n);
          if (contador === 0) {contador = contador + 1};
-         currentPageIndex = currentPageIndex - contador;
-         if (currentPageIndex < 0 ){currentPageIndex = 0};
+         currentslideIndex = currentslideIndex - contador;
+         if (currentslideIndex < 0 ){currentslideIndex = 0};
          n = 0;
         }
       }
@@ -75,11 +75,11 @@
 
       else if (event.key === 'g'){
         document.addEventListener('keydown', function(event) {
-           if (event.key === 'g') {currentPageIndex = 0};
+           if (event.key === 'g') {currentslideIndex = 0};
         })
       }
       
-      else if (event.key === 'G') { currentPageIndex = pages.length - 1}
+      else if (event.key === 'G') { currentslideIndex = slides.length - 1}
 
       else if (event.key === 'm'){toggleMovement()}
 
@@ -89,11 +89,11 @@
 
       else {return};
 
-      for (var i = 0; i < pages.length; i++) {
-        if (i === currentPageIndex) {
-          pages[i].style.display = 'block';
+      for (var i = 0; i < slides.length; i++) {
+        if (i === currentslideIndex) {
+          slides[i].style.display = 'block';
         } else {
-          pages[i].style.display = 'none';
+          slides[i].style.display = 'none';
         }
       }
     });

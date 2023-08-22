@@ -21,8 +21,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         if line.starts_with("---") {
             body.push_str(close_last_handle(&handle));
             match handle {
-                None => body.push_str("<!------------------------>\n<div class=\"page\">"),
-                _ => body.push_str("</div><!------------------------>\n<div class=\"page\">"),
+                None => body.push_str("<!------------------------>\n<div class=\"slide\">"),
+                _ => body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
             }
             handle = None;
 
@@ -50,8 +50,15 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else if line.starts_with(".video"){
             body.push_str(close_last_handle(&handle));
             let input = file_base64(trim_element(&line))?; 
-            body.push_str(&format!("<video controls src=\"data:video;base64,{}\"", input));
+            body.push_str(&format!("<video controls src=\"data:video;base64,{}\">", input));
             handle = Some(Video);
+
+        } else if line.starts_with(".urlvideo"){
+            body.push_str(close_last_handle(&handle));
+            let input = trim_element(&line); 
+            body.push_str(&format!("<iframe width=\"560\" height=\"315\" src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\">", input));
+            //body.push_str(&format!("<video controls src=\"{}\" >", input));
+            handle = Some(URLVideo);
 
         } else if line.starts_with(".list"){
             body.push_str(close_last_handle(&handle));
@@ -104,19 +111,27 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
      }
     
     let head = format!(
-        "<html lang=\"en\"> <head> <meta charset=\"UTF-8\"> <title>{}</title> {} </head> ",
+        "<!DOCTYPE html>
+        <html lang=\"en\"> 
+          <head> 
+            <meta charset=\"UTF-8\"> <title>{}</title> 
+            {} 
+          </head> 
+          <body> 
+           <div id=\"marcador\"></div> 
+           <div id=\"popup\"> <p><span id=\"conteudo-popup\"></span></p> </div>",
         title,
-        generate_logo(logo_path),
+        generate_style(css_path)
     );
 
     body.push_str(
-        &format!("<body> <div id=\"marcador\"></div> <div id=\"popup\"> <p><span id=\"conteudo-popup\"></span></p> </div> {} <!------------------------> <footer> <p>{}</p> </footer></body> {} </html>", 
-         generate_style(css_path),
+        &format!(" </div><footer><p>{}</p></footer> {} </body> {} </html>", 
          foot, 
+         generate_logo(logo_path),
          generate_script(script_path)
         )
     );
 
-    println!("{}\n{}", head, body);
+    println!("{}{}", head, body);
     Ok(())
 }
