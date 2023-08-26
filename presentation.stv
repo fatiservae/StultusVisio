@@ -2,7 +2,7 @@
 .foot Um rodapé @ 2023
 .logo ./Images/logo.png
 .css ./Config/style.css
-#.script ./Config/script.js
+.script ./Config/script.js
 
 ---
 .heading Exemplo de lista simples

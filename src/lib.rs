@@ -226,10 +226,29 @@ pub fn generate_logo(logo_path: Option<String>) -> String {
 pub fn generate_style(css_path: Option<String>) -> String {
     match css_path {
         Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
-        None => "<style>@font-face {
+        None => "<style>
+        /*    This file is part of StultusVisio.
+
+     StultusVisio is free software: you can redistribute it and/or modify
+     it under the terms of the GNU General Public License as published by
+     the Free Software Foundation, either version 3 of the License, or
+     (at your option) any later version.
+
+     StultusVisio is distributed in the hope that it will be useful,
+     but WITHOUT ANY WARRANTY; without even the implied warranty of
+     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+     GNU General Public License for more details.
+
+     You should have received a copy of the GNU General Public License
+     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
+     Jefferson T. @ 2023. Telegram: StalinCCCP
+*/
+
+/*@font-face {
   font-family: 'Arial';
-  /*src: url('./SF-Pro-Display-Medium.otf') format('opentype');*/
+  src: url('./SF-Pro-Display-Medium.otf') format('opentype');
 }
+*/
 
 body {
   display:grid;
@@ -237,18 +256,20 @@ body {
   padding: 0 !important;
   max-width: 90vw;
   border: none;
-  font-family: 'SFPro', Arial, sans-serif;
-  font-size: clamp(12px, 1em, 5vw);
+  font-family: Heveltica, 'SFPro', sans-serif;
+  font-size: clamp(15px, 30px, 50px);
+  /*font-size: 16px;*/
   text-align: justify;
 }
 
 #popup {
+  font-size: clamp(10%, 40%, 60%);
   display: block;
   position: fixed;
   top: 1em;
   left: 1em;
   color: black;
-  background-color: rgba(200, 225, 255, 0.85); 
+  background-color: rgba(200, 225, 255, 0.85);
   padding: 20px;
   border: 3px solid #000;
   border-radius: 5px;
@@ -262,12 +283,10 @@ body {
 
 #popup h1{
   text-align: center;
-  font-size: 2em;
 }
 
 #popup h2{
   text-align: center;
-  font-size: 1.5em;
 }
 
 #popup p{
@@ -290,8 +309,11 @@ body {
   padding: 1em;
 }
 
-h1, h2, h3 {
-  font-size: calc(2vw + 2vh + 1vmin); /* cálculo responsivo */
+.slide h1, h2, h3 {
+  padding-top: clamp(2%, 2vw, 80%);
+  padding-right: 1vw;
+  padding-left: 1vw;
+  /*font-size: clamp(15px, 2em, 80%);*/
   max-height: 100%; /* Define a altura máxima igual à altura do elemento pai */
   overflow-y: auto; /* Adiciona uma barra de rolagem vertical quando necessário */
   display: grid;
@@ -299,15 +321,11 @@ h1, h2, h3 {
   justify-content: center; /* Centraliza horizontalmente */
 }
 
-ul, ol {
-  padding-left: 5vw;
-  padding-right: 5vw;
-  font-size: calc(1vw + 1vh + 1vmin); 
-  max-height: 100%; 
-  overflow-y: auto; 
-  display: grid;
-  align-items: center; 
-  justify-content: center; 
+.slide ol, ul {
+  font-size: clamp(10px, 2.5em, 90%);
+  padding-top: clamp(1px, 1em, 10%);
+  padding-left: clamp(5%, 20%, 80%);
+  padding-right: clamp(5%, 20%, 80%);
 }
 
 .slide figure {
@@ -315,7 +333,7 @@ ul, ol {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  height: 95vh;
+  height: clamp(40vh, 80%, 95vh);
   max-width: 100%;
   max-height: 100%;
   border-radius: 10px 10px 10px 10px;
@@ -325,8 +343,9 @@ ul, ol {
 /*  text-shadow: 2px 2px 4px rgba(3, 3, 3, 0.5);*/
   position: relative;
   bottom: 0em;
-  font-size: 1em;
   text-align: right;
+  padding-right: 20%;
+  font-size: clamp(15%, 50%, 70%);
 }
 
 .slide figure img {
@@ -345,10 +364,24 @@ img {
   width: 98vw;
   height: 98vh;
   object-fit: contain;
-  padding-top: 1vh;;
-  padding-bottom: 1vh;;
-  padding-right: 1vw;;
-  padding-left: 1vw;;
+  padding-top: 1vh;
+  padding-bottom: 1vh;
+  padding-right: 1vw;
+  padding-left: 1vw;
+}
+
+.diviframe {
+  width: 80vw;
+  height: 80vh;
+  padding-top: 10vh;
+  padding-bottom: 10vh;
+  padding-right: 10vw;
+  padding-left: 10vw;
+}
+
+iframe {
+  width: 100%;
+  height: 100%;
 }
 
 .logo {
@@ -361,97 +394,35 @@ img {
 }
 
 footer {
-  background-color: rgba(200, 225, 255, 0.5); 
+  font-size: 35%;
+  background-color: rgba(200, 225, 255, 0.5);
   left: 3em;
   right: 65vw;
-  border-top: 1px solid green;
   bottom: 0;
+  border-top: 2px solid green;
   text-align: center;
   position: fixed;
-  font-size: 0.8em;
   color: black;
 }
 
-/* Mostra apenas a primeira página
-.slide:nth-of-type(1){
-  display: block;
-  background-image: url('capa.jpg');
-  background-size: cover;
-  background-position: center; 
-}
-*/
+/*
 .titulo {
   padding-top: 10vh;
-  color: black; 
+  color: black;
   text-shadow: 2px 2px 4px rgba(250, 250, 250, 3.5);
 }
-
-/*
-.capa {
-  height: 100%;
-  max-height: 100%;
-  width: 100%;
-  background-image: url('capa.jpg');
-  background-size: cover;
-  background-position: center; 
-}*/
-
-/*#marcador {
-  position: absolute;
-  width: 50px;
-  height: 50px;
-  border: 2px solid red;
-  border-radius: 50%;
-  display: none; /* Oculta o círculo inicialmente 
-  z-index: +100;
-}
-
-/*seta*/
-/*
-#marcador {
-  position: absolute;
-  width: 0;
-  height: 0;
-  border-top: 10px solid transparent;
-  border-bottom: 10px solid transparent;
-  border-right: 20px solid red;
-  transform-origin: left center;
-  transition: transform 0.4s ease-out;
-  z-index: +100;
-}
 */
-#marcador {
-      position: absolute;
-      width: 80px;
-      height: 80px;
-      border-radius: 50%;
-      background-color: transparent;
-      display: none; /* Oculta o círculo inicialmente*/
-      border: 8px solid rgba(55, 0, 200, 1); /* Cor da cobertura translúcida */
-      z-index: 9999; /* Coloca o círculo acima de outros elementos */
-}
 
-/*.capa img{
-  top:0;
-  left:0;
-  display: absolute;
-  z-index: -1;
-  height: 100vh;
-  width: auto;
-  max-width: 100%;
-  max-height: 100%;
+#marcador {
+ position: absolute;
+ width: 80px;
+ height: 80px;
+ border-radius: 50%;
+ background-color: transparent;
+ display: none; /* Oculta o círculo inicialmente*/
+ border: 8px solid rgba(55, 0, 200, 1); /* Cor da cobertura translúcida */
+ z-index: 9999; /* Coloca o círculo acima de outros elementos */
 }
-.capa ul{
-  top:0;
-  left:0;
-  display: absolute;
-  color: white; 
-  text-shadow: 2px 2px 4px rgba(1, 1, 1.5, 3.5);
-  object-fit: contain;
-  z-index: +1;
-  font-size: 1em;
-}
-*/
 </style>".to_string(),
     }
 }

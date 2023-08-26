@@ -104,10 +104,10 @@ Pressione `p` para alternar no modo printável. Em qualquer navegador, escolha m
 - [x] básico de uso geral.
 - [x] marcador circular.
 - [x] controles vim-like.
-- [] marcador do tipo desenho.
-- [] implementar opção STDIN file.
-- [] carrossel de imagens em único slide.
-- [] incluir arquivos diretos de fontes.
+- [ ] marcador do tipo desenho.
+- [ ] implementar opção STDIN file.
+- [ ] carrossel de imagens em único slide.
+- [ ] incluir arquivos diretos de fontes.
 
 ## Licença
 GNU GPL v.3
