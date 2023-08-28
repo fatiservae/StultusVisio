@@ -16,7 +16,9 @@
 -->
 # StultusVisio 0.1.1
 
-## Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
+Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
+
+![Vídeo exemplo](stultus-visio.mp4)
 
 ## Racional
 Todos atuais softwares de apresentação de slides são péssimos.
