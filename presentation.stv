@@ -3,6 +3,7 @@
 .logo ./Images/logo.png
 .css ./Config/style.css
 .script ./Config/script.js
+.frommermaid https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs
 
 ---
 .heading Exemplo de lista simples
@@ -25,6 +26,13 @@ Esta frase é propositalmente mais longa e conta com vírgulas, pontos e exclama
 
 ---
 .video ./Videos/example.mp4
+
+---
+.mermaid
+graph TD 
+A --- B
+B-->C[fa:fa-ban Fim]
+B-->D(fa:fa-spinner);
 
 ---
 .urlvideo https://www.youtube.com/embed/F0lowv3DyfI?si=tzXa2XTlIQDgKza4

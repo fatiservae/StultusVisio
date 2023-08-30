@@ -26,6 +26,7 @@ pub enum Handle {
     SubHeading,
     List,
     OrdList,
+    Mermaid,
 }
 
 pub fn trim_element(input: &String) -> String {
@@ -41,6 +42,7 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &str {
     match handle {
         None => "",
         Some(Handle::Image) => "</figure>",
+        Some(Handle::Mermaid) => "</pre></div>",
         Some(Handle::Caption) => "</figure>",
         Some(Handle::List) => "</ul>",
         Some(Handle::OrdList) => "</ol>",
@@ -55,6 +57,17 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &str {
 pub fn file_base64(file: String) -> Result<String, Box<dyn std::error::Error>> {
     let file_data = fs::read(file)?;
     Ok(base64::encode(&file_data))
+}
+
+pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
+    match mermaid_script {
+        Some(mermaid_script) => format!(
+                "<script type=\"module\">import mermaid from '{}';</script>", 
+                mermaid_script),
+        None => "<script type=\"module\">import mermaid from 
+            'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+            </script>".to_string()
+    }
 }
 
 pub fn generate_script(script_path: Option<String>) -> String {
@@ -426,3 +439,4 @@ footer {
 </style>".to_string(),
     }
 }
+

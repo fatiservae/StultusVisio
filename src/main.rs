@@ -30,6 +30,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut script_path = None;
     let mut css_path = None;
     let mut logo_path = None;
+    let mut script_mermaid = None;
 
     for line in reader.lines() {
         let line = line?;
@@ -115,11 +116,20 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         } else if line.starts_with(".css"){
             css_path = Some(trim_element(&line));
 
+        } else if line.starts_with(".mermaid"){
+            body.push_str(close_last_handle(&handle));
+            body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
+            handle = Some(Mermaid);
+
         } else if line.starts_with(".logo"){
             logo_path = Some(trim_element(&line));
 
+        } else if line.starts_with(".frommermaid"){
+            script_mermaid = Some(trim_element(&line));
+
         } else {
             match handle {
+                Some(Mermaid) => body.push_str(&format!("{}\n", line)),
                 Some(List) => body.push_str(&format!("<li>{}</li>", line)),
                 Some(OrdList) => body.push_str(&format!("<li>{}</li>", line)),
                 Some(Text) => body.push_str(&format!("<p>{}</p>", line)),
@@ -143,9 +153,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     );
 
     body.push_str(
-        &format!(" </div><footer><p>{}</p></footer> {} </body> {} </html>", 
+        &format!(" </div><footer><p>{}</p></footer> {} </body> {} {} </html>", 
          foot, 
          generate_logo(logo_path),
+         generate_mermaid_script(script_mermaid),
          generate_script(script_path)
         )
     );
