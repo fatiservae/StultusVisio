@@ -18,6 +18,10 @@ use std::fs::File;
 use std::io::{BufRead, BufReader};
 use lib::*;
 use lib::Handle::*;
+mod style;
+mod script;
+use crate::style::*;
+use crate::script::*;
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let file = File::open("presentation.stv")?;

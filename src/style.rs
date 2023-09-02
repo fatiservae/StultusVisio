@@ -1,26 +1,23 @@
-/*    This file is part of StultusVisio.
- 
-     StultusVisio is free software: you can redistribute it and/or modify
-     it under the terms of the GNU General Public License as published by
-     the Free Software Foundation, either version 3 of the License, or
-     (at your option) any later version.
- 
-     StultusVisio is distributed in the hope that it will be useful,
-     but WITHOUT ANY WARRANTY; without even the implied warranty of
-     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-     GNU General Public License for more details.
- 
-     You should have received a copy of the GNU General Public License
-     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
-     Jefferson T. @ 2023. Telegram: StalinCCCP 
-*/
+//    This file is part of StultusVisio.
+//
+//    StultusVisio is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    StultusVisio is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
+//    Jefferson T. @ 2023. Telegram: StalinCCCP
 
-/*@font-face {
-  font-family: 'Arial';
-  src: url('./SF-Pro-Display-Medium.otf') format('opentype');
-}
-*/
-
+pub fn generate_style(css_path: Option<String>) -> String {
+    match css_path {
+        Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
+        None => "<style>
 body {
   display:grid;
   margin: 0 !important;
@@ -201,4 +198,8 @@ footer {
  display: none; /* Oculta o círculo inicialmente*/
  border: 8px solid rgba(55, 0, 200, 1); /* Cor da cobertura translúcida */
  z-index: 9999; /* Coloca o círculo acima de outros elementos */
+}
+
+</style>".to_string(),
+    }
 }

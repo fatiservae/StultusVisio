@@ -15,7 +15,23 @@ Um quarto;
 Finalmente o último.
 
 ---
-.heading Outro slide
+.heading Duas listas curtas paralelas
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+
+---
+.heading Faça listas longas...
+.subheading ...em um slide separado
 .ordlist
 Este exemplo é de uma lista ordenada.
 Esta frase é propositalmente mais longa e conta com vírgulas, pontos e exclamação! Longa o suficiente para exibir a quebra de linha.
@@ -28,11 +44,13 @@ Esta frase é propositalmente mais longa e conta com vírgulas, pontos e exclama
 .video ./Videos/example.mp4
 
 ---
+.heading Exemplo de fluxograma em mermaid
 .mermaid
 graph TD 
 A --- B
 B-->C[fa:fa-ban Fim]
 B-->D(fa:fa-spinner);
+C-->A
 
 ---
 .urlvideo https://www.youtube.com/embed/F0lowv3DyfI?si=tzXa2XTlIQDgKza4
