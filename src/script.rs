@@ -14,6 +14,11 @@
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
 
+/// Função que cria um raw de style.css para 
+/// compilação padrão, quando no arquivo de
+/// entrada não for apresentado uma âncora do
+/// tipo .style apontando para um arquivo de 
+/// style.
 pub fn generate_script(script_path: Option<String>) -> String {
     match script_path {
         Some(script_path) => format!("<script src=\"{}\"></script>", script_path),
@@ -168,7 +173,6 @@ pub fn generate_script(script_path: Option<String>) -> String {
       } else {
         circle.style.display = 'none';
       }
-    }
 
     }</script>
 ".to_string(),

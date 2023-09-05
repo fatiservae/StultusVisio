@@ -16,6 +16,8 @@
 use std::fs;
 use base64;
 
+/// Possíveis handles que indicam como a próxima
+/// linha será processada.
 pub enum Handle {
     Caption,
     Image,
@@ -29,6 +31,7 @@ pub enum Handle {
     Mermaid,
 }
 
+/// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
     if let Some(index) = input.find(' ') {
         let cut_string = input[index + 1..].to_string();
@@ -38,6 +41,8 @@ pub fn trim_element(input: &String) -> String {
     }
 }
 
+/// Fecha o último handle para que a tag corres
+/// pondente seja propriamente encerrada.
 pub fn close_last_handle(handle: &Option<Handle>) -> &str {
     match handle {
         None => "",
@@ -59,6 +64,9 @@ pub fn file_base64(file: String) -> Result<String, Box<dyn std::error::Error>> {
     Ok(base64::encode(&file_data))
 }
 
+/// Fornece um script padrão para as âncoras
+/// .mermaid ou aceita um apontamento feito
+/// por .frommermaid
 pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
     match mermaid_script {
         Some(mermaid_script) => format!(
@@ -70,6 +78,7 @@ pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
     }
 }
 
+/// Aponta uma logo para ser renderizada caso exista.
 pub fn generate_logo(logo_path: Option<String>) -> String {
     match logo_path {
         Some(logo_path) => format!("<img src=\"{}\" class=\"logo\">", logo_path),
