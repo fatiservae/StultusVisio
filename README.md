@@ -14,7 +14,7 @@
     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
     Jefferson T. @ 2023. Telegram: StalinCCCP 
 -->
-# StultusVisio 0.1.1
+# StultusVisio 0.2.2
 
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 
@@ -29,6 +29,8 @@ Um modo minimalista de construir apresentações, sem transições inúteis, mod
 Um software simples que te obriga a montar slides coerentes.
 
 Um slide deve conter apenas um(a) imagem, vídeo ou texto. Evite inserir ambos.
+
+Para fluxogramas, timelines, tabelas e mídias de dados organizados, use ![Mermaid](https://mermaid.js.org/), conforme exemplo abaixo.
 
 No diretório, crie o arquivo `presentation.stv` e edite-o:
 
@@ -55,6 +57,15 @@ Segundo item de uma lista.
 .video ./Videos/exemplo.mp4
 
 ---
+.heading Exemplo de fluxograma em mermaid
+.mermaid
+graph TD
+A --- B
+B-->C[fa:fa-ban Fim]
+B-->D(fa:fa-spinner);
+C-->A
+
+---
 .heading Um exemplo de lista ordenada.
 .ordlist
 Primeiro item numerado.
@@ -63,12 +74,13 @@ Mais um.
 Último.
 
 ```
+## Compilação e instalação
 Compile o StultusVisio:
 ```
 $ cargo build --release 
 ```
 
-Execute stultus_visio no mesmo diretório do arquvio `presentation.stv`, por exemplo:
+Mova o binário para $PATH ou execute stultus_visio no mesmo diretório do arquvio `presentation.stv`, por exemplo:
 ```
 $ ./target/stultus_visio > Presentation.html
 ```
