@@ -30,7 +30,7 @@ Um software simples que te obriga a montar slides coerentes.
 
 Um slide deve conter apenas um(a) imagem, vídeo ou texto. Evite inserir ambos.
 
-Para fluxogramas, timelines, tabelas e mídias de dados organizados, use ![Mermaid](https://mermaid.js.org/), conforme exemplo abaixo.
+Para fluxogramas, timelines, tabelas e mídias de dados organizados, use ![Mermaid](https://github.com/mermaid-js/mermaid), conforme exemplo abaixo.
 
 No diretório, crie o arquivo `presentation.stv` e edite-o:
 
