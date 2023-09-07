@@ -14,14 +14,14 @@
     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
     Jefferson T. @ 2023. Telegram: StalinCCCP 
 -->
-# StultusVisio 0.2.2
+# StultusVisio 0.2.3
 
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 
 ![Vídeo exemplo](stultus-visio.mp4)
 
 ## Racional
-Todos atuais softwares de apresentação de slides são péssimos.
+Todos atuais softwares de apresentação de slides são **péssimos**.
 
 Um modo minimalista de construir apresentações, sem transições inúteis, modos contraproducentes como duas telas, WYSIWYG e compiladores complexos.
 
@@ -32,7 +32,7 @@ Um slide deve conter apenas um(a) imagem, vídeo ou texto. Evite inserir ambos.
 
 Para fluxogramas, timelines, tabelas e mídias de dados organizados, use ![Mermaid](https://github.com/mermaid-js/mermaid), conforme exemplo abaixo.
 
-No diretório, crie o arquivo `presentation.stv` e edite-o:
+No diretório, crie um arquivo `minha_apresentacao.stv` e edite-o:
 
 ```
 .title Título da apresentação
@@ -74,18 +74,21 @@ Mais um.
 Último.
 
 ```
-## Compilação e instalação
+## Compilação, instalação e uso
+
 Compile o StultusVisio:
 ```
 $ cargo build --release 
 ```
 
-Mova o binário para $PATH ou execute stultus_visio no mesmo diretório do arquvio `presentation.stv`, por exemplo:
+Mova o binário para $PATH ou execute stultus_visio no mesmo diretório do arquvio `minha_apresentacao.stv`, por exemplo:
 ```
-$ ./target/stultus_visio > Presentation.html
+$ ./target/stultus_visio minha_apresentacao.stv
 ```
 
-Abra `Presentation.html` em qualquer navegador web.
+A apresentação `minha_apresentacao.html` será criada no mesmo diretório.
+
+Abra-a em qualquer navegador web.
 
 O arquivo é portável e único. Basta compartilhar o HTML em si.
 
@@ -95,7 +98,7 @@ Para personalizar estilos e comportamento, aponte para arquivos personalizados d
 > Erros de sintaxe no arquivo presentation.stv são renderizados como slides com uma mensagem de erro.
 
 > [!IMPORTANT]
-> A violação da filosofia do software produz comportamento imprevisto.
+> A violação da filosofia do software produz comportamento imprevisto. Não seja estúpido, apresentadores de slides não são editores de imagens. Edite-as no seu software favorito e importe-as.
 
 ## Controles
 
@@ -112,14 +115,16 @@ x   :   Altere tamanho do marcador.
 ```
 
 ## Salvar como PDF
-Pressione `p` para alternar no modo printável. Em qualquer navegador, escolha modo `landscape` e em opções avançadas, desmarque `headers and footers` ou `cabeçalhos e rodapés`.
+Pressione `p` para alternar no modo printável. 
+Em qualquer navegador, escolha modo `landscape` e em opções avançadas, desmarque `headers and footers` ou `cabeçalhos e rodapés`.
+Imprima na opção `Salvar para PDF`.
 
 ## Tasks
 - [x] básico de uso geral.
 - [x] marcador circular.
 - [x] controles vim-like.
+- [x] implementar opção STDIN file.
 - [ ] marcador do tipo desenho.
-- [ ] implementar opção STDIN file.
 - [ ] carrossel de imagens em único slide.
 - [ ] incluir arquivos diretos de fontes.
 

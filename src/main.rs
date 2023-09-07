@@ -14,15 +14,19 @@
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
 
-use std::fs::File;
-use std::env;
-use std::io::{BufRead, BufReader};
+use std::{
+    env,
+    fs::{File, write},
+    io::{BufRead, BufReader}
+};
 use lib::*;
 use lib::Handle as H;
-mod style;
 mod script;
-use crate::style::*;
-use crate::script::*;
+mod style;
+use crate::{
+    style::*, 
+    script::*
+};
 
 /// Cria dois vetores de argumentos passados ao programa,
 /// um contendo possíveis caminhos de arquivos e outro conten
@@ -48,7 +52,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     }
 
     for file in files {
-        let reader = BufReader::new(File::open(file)?);
+        let reader = BufReader::new(File::open(file.clone())?);
  
         let mut handle: Option<Handle> = None;
         let mut body = String::new();
@@ -162,8 +166,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Some(H::Text) => body.push_str(&format!("<p>{}</p>", line)),
                     _ => body.push_str(&format!("ERROR: verifique a sintaxe deste texto: {}", line)),
                 }
-            }
-         }
+        }
+
+    }
         
         let head = format!(
             "<!DOCTYPE html>
@@ -188,8 +193,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             )
         );
 
-        println!("{}{}", head, body);
-
+        write(
+            stv_to_html(&file), 
+            format!("{}{}", head, body)
+        )?;
     }
+
     Ok(())
 }

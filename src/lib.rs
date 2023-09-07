@@ -85,3 +85,20 @@ pub fn generate_logo(logo_path: Option<String>) -> String {
         None => "".to_string(),
     }
 }
+
+/// Valida o arquivo de entrada como um stv válido.
+/// Atualmente, apenas checka se o arquivo é um .stv
+/// TODO: adicionar capacidade de verificar sintaxe.
+pub fn validate_stv(name: &str) -> Result<bool, ()> {
+    if name.ends_with(".stv") {
+        Ok(true)
+    } else { 
+        Err(())
+    }
+}
+
+/// Corta a extensão .stv e apensa .html o nome de 
+/// arquivo que será usado como output.
+pub fn stv_to_html(name: &str) -> String {
+    format!("{}.html", &name[..&name.len() - 4]).to_string()
+}
