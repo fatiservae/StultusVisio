@@ -86,7 +86,7 @@ Mova o binário para $PATH ou execute stultus_visio no mesmo diretório do arquv
 $ ./target/stultus_visio minha_apresentacao.stv
 ```
 
-A apresentação `minha_apresentacao.html` será criada no mesmo diretório.
+A apresentação [minha_apresentacao.html](./minha_apresentacao.html) será criada no mesmo diretório.
 
 Abra-a em qualquer navegador web.
 
