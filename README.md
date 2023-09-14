@@ -125,6 +125,7 @@ Imprima na opção `Salvar para PDF`.
 - [x] controles vim-like.
 - [x] implementar opção STDIN file.
 - [ ] marcador do tipo desenho.
+- [ ] zoom ad-hoc do slide atual.
 - [ ] carrossel de imagens em único slide.
 - [ ] incluir arquivos diretos de fontes.
 

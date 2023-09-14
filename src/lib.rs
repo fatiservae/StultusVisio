@@ -60,7 +60,7 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &str {
 }
 
 pub fn file_base64(file: String) -> Result<String, Box<dyn std::error::Error>> {
-    let file_data = fs::read(file)?;
+    let file_data = fs::read(file).expect("Arquivo de mídia não encontrado para converter em base64");
     Ok(base64::encode(&file_data))
 }
 

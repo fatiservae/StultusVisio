@@ -37,18 +37,21 @@ use crate::{
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = env::args().collect();
 
-    let mut options = Vec::new();
+//    let mut options = Vec::new();
     let mut files = Vec::new();
 
     for arg in args.iter().skip(1) {
-        if arg.starts_with("-") {
+        // TODO ATENCAO
+        // DESESTRUTURADO POR CAUSAR BUG DE LEITURA
+        //if arg.starts_with("-") {
             // TODO
             // options é um Vec que acumula
             // opções passadas como parametros.
-            options.push(arg.clone()); 
-        } else {
+         //   options.push(arg.clone()); 
+       // } else {
             files.push(arg.clone());
-        }
+            println!("arg1:\n{}", arg);
+        //}
     }
 
     for file in files {
@@ -79,7 +82,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             } else if line.starts_with(".image"){
                 body.push_str(close_last_handle(&handle));
-                let input = file_base64(trim_element(&line))?;
+                let input = file_base64(trim_element(&line)).expect(&format!("Chamada do arquivo não encontrado:\n{}", line));
                 body.push_str(&format!("<figure><img src=\"data:image;base64,{}\">", input));
                 handle = Some(H::Image);
 
