@@ -13,11 +13,20 @@
 //    You should have received a copy of the GNU General Public License
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
-use std::fs;
-use base64;
+use{
+    std::{
+        fs, 
+        path::Path,
+    },
+    base64
+};
 
-/// Possíveis handles que indicam como a próxima
-/// linha será processada.
+/// Possíveis handles que indicam como a próxima linha será processada.
+///
+/// TODO: Idealmente, `main()` deveria ser feita idiomaticamente por 
+/// métodos que confiram o valor de Handle e ofereçam a confecção adequada 
+/// do HTML correspondente ou devolva um erro verboso. Comportamentos 
+/// adaptativos também podem ser ofertados. 
 pub enum Handle {
     Caption,
     Image,
@@ -41,8 +50,7 @@ pub fn trim_element(input: &String) -> String {
     }
 }
 
-/// Fecha o último handle para que a tag corres
-/// pondente seja propriamente encerrada.
+/// Fecha o último handle para que a tag correspondente seja propriamente encerrada.
 pub fn close_last_handle(handle: &Option<Handle>) -> &str {
     match handle {
         None => "",
@@ -59,14 +67,24 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &str {
     }
 }
 
-pub fn file_base64(file: String) -> Result<String, Box<dyn std::error::Error>> {
-    let file_data = fs::read(file).expect("Arquivo de mídia não encontrado para converter em base64");
-    Ok(base64::encode(&file_data))
+/// Converte arquivo apontado para base64 e incorpora o `raw data` no HTML final.
+pub fn file_base64(file: String, tipo: &str) -> Result<String, Box<dyn std::error::Error>> {
+    let file_data = fs::read(file.clone())
+                        .expect("Arquivo de mídia não encontrado para converter em base64");
+
+    let teste = file.clone();
+    
+    let file_extension = Path::new(&teste)
+                        .extension()
+                        .expect(&format!("Erro ao determinar o tipo de arquivo de: {}", &file))
+                        .to_str()
+                        .ok_or(&format!("Erro ao converter o caminho de {} para string.", &file))
+                        .expect(&format!("Erro ao validar {} como caminho de arquivo", &file));
+    Ok(format!("data:{}/{};base64,{}", tipo, file_extension, base64::encode(&file_data)))
 }
 
-/// Fornece um script padrão para as âncoras
-/// .mermaid ou aceita um apontamento feito
-/// por .frommermaid
+/// Fornece um script padrão para as âncoras `.mermaid` ou aceita um apontamento 
+/// feito por `.frommermaid`
 pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
     match mermaid_script {
         Some(mermaid_script) => format!(
@@ -86,9 +104,9 @@ pub fn generate_logo(logo_path: Option<String>) -> String {
     }
 }
 
-/// Valida o arquivo de entrada como um stv válido.
-/// Atualmente, apenas checka se o arquivo é um .stv
-/// TODO: adicionar capacidade de verificar sintaxe.
+/// Valida o arquivo de entrada como um stv válido. Atualmente, apenas checka se o arquivo 
+/// é um .stv. 
+//  TODO: adicionar capacidade de verificar sintaxe.
 pub fn validate_stv(name: &str) -> Result<bool, ()> {
     if name.ends_with(".stv") {
         Ok(true)
@@ -97,8 +115,7 @@ pub fn validate_stv(name: &str) -> Result<bool, ()> {
     }
 }
 
-/// Corta a extensão .stv e apensa .html o nome de 
-/// arquivo que será usado como output.
+/// Corta a extensão `.stv` e apensa `.html` o nome de arquivo que será usado como output.
 pub fn stv_to_html(name: &str) -> String {
     format!("{}.html", &name[..&name.len() - 4]).to_string()
 }

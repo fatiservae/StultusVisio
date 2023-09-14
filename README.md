@@ -18,8 +18,6 @@
 
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 
-![Vídeo exemplo](stultus-visio.mp4)
-
 ## Racional
 Todos atuais softwares de apresentação de slides são **péssimos**.
 
@@ -119,7 +117,9 @@ Pressione `p` para alternar no modo printável.
 Em qualquer navegador, escolha modo `landscape` e em opções avançadas, desmarque `headers and footers` ou `cabeçalhos e rodapés`.
 Imprima na opção `Salvar para PDF`.
 
-## Tasks
+## Tasks e devesenvolvimento
+[Documentação](./target/doc/stultus_visio/index.html)
+
 - [x] básico de uso geral.
 - [x] marcador circular.
 - [x] controles vim-like.
