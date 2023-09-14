@@ -13,7 +13,6 @@
 //    You should have received a copy of the GNU General Public License
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
-
 use std::{
     env,
     fs::{File, write},
@@ -28,33 +27,17 @@ use crate::{
     script::*
 };
 
-/// Cria dois vetores de argumentos passados ao programa,
-/// um contendo possíveis caminhos de arquivos e outro conten
-/// do opções. Atualmente, o vetor de opções é um TODO. 
-/// Cada arquivo apontado no vetor de arquivos é processado 
-/// pela lógica principal do programa, identificando o signi
-/// ficado de cada linha e renderizando o HTML correspondente.
+/// Um compilador markup para HTML.
+///
+/// Use `lib::Handle` como token de operações para síntese de HTML válido.
+///
+/// O processamento do arquivo de entrada é feito linha-a-linha ao estilo 
+/// crawler, incrementando a variável `body`.
+///
+/// O documento `.html` final é concatenado ao fim da compilação.
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let args: Vec<String> = env::args().collect();
-
-//    let mut options = Vec::new();
-    let mut files = Vec::new();
-
-    for arg in args.iter().skip(1) {
-        // TODO ATENCAO
-        // DESESTRUTURADO POR CAUSAR BUG DE LEITURA
-        //if arg.starts_with("-") {
-            // TODO
-            // options é um Vec que acumula
-            // opções passadas como parametros.
-         //   options.push(arg.clone()); 
-       // } else {
-            files.push(arg.clone());
-            println!("arg1:\n{}", arg);
-        //}
-    }
-
-    for file in files {
+    let files: Vec<String> = env::args().collect();
+    for file in files.into_iter().skip(1){
         let reader = BufReader::new(File::open(file.clone())?);
  
         let mut handle: Option<Handle> = None;
@@ -65,10 +48,12 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         let mut css_path = None;
         let mut logo_path = None;
         let mut script_mermaid = None;
+        let mut line_no = 0;
 
         for line in reader.lines() {
-            let line = line?;
-
+            line_no = line_no + 1;
+            let line = line.expect(&format!("Erro na leitura da linha {}", line_no));
+            
             if line.starts_with("---") {
                 body.push_str(close_last_handle(&handle));
                 match handle {
@@ -82,8 +67,11 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             } else if line.starts_with(".image"){
                 body.push_str(close_last_handle(&handle));
-                let input = file_base64(trim_element(&line)).expect(&format!("Chamada do arquivo não encontrado:\n{}", line));
-                body.push_str(&format!("<figure><img src=\"data:image;base64,{}\">", input));
+
+                let input = file_base64(trim_element(&line), "image")
+                            .expect(&format!("Arquivo apontado na linha {} não encontrado.", line_no));
+
+                body.push_str(&format!("<figure><img src=\"{}\">", input));
                 handle = Some(H::Image);
 
             } else if line.starts_with(".caption"){
@@ -100,8 +88,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
             } else if line.starts_with(".video"){
                 body.push_str(close_last_handle(&handle));
-                let input = file_base64(trim_element(&line))?; 
-                body.push_str(&format!("<video controls src=\"data:video;base64,{}\">", input));
+                let input = file_base64(trim_element(&line), "video")?; 
+                body.push_str(&format!("<video controls src=\"{}\">", input));
                 handle = Some(H::Video);
 
             } else if line.starts_with(".urlvideo"){

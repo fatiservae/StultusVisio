@@ -1,6 +1,6 @@
 [package]
 name = "stultusvisio"
-version = "0.1.0"
+version = "0.2.4"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -9,7 +9,7 @@ name = "lib"
 path = "src/lib.rs"
 
 [[bin]]
-name = "stultus_visio"
+name = "stultusvisio"
 path = "src/main.rs"
 
 [dependencies]
