@@ -40,6 +40,18 @@ pub enum Handle {
     Mermaid,
 }
 
+pub struct Crawler {
+    handle: Option<Handle>,
+    body: String,
+    title: String,
+    foot: String,
+    script_path: Option<String>,
+    css_path: Option<String>,
+    logo_path: Option<String>,
+    script_mermaid: Option<String>,
+    line_no: usize,
+}
+
 /// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
     if let Some(index) = input.find(' ') {
@@ -118,4 +130,129 @@ pub fn validate_stv(name: &str) -> Result<bool, ()> {
 /// Corta a extensão `.stv` e apensa `.html` o nome de arquivo que será usado como output.
 pub fn stv_to_html(name: &str) -> String {
     format!("{}.html", &name[..&name.len() - 4]).to_string()
+}
+
+pub trait Craw {
+    fn craw(&self, craw: Crawler); 
+}
+
+impl Craw for Crawler {
+    fn craw(self, craw: Crawler) {
+        let mut body = craw.body;
+        let mut handle = craw.handle;
+        let mut title = craw.title;
+        let mut foot = craw.foot;
+        let mut script_path = craw.script_path;
+        let mut css_path = craw.css_path;
+        let mut logo_path = craw.logo_path;
+        let mut script_mermaid = craw.script_mermaid;
+        let mut line_no = craw.line_no;
+
+        line_no = line_no + 1;
+
+        if self.starts_with("---") {
+            body.push_str(close_last_handle(&handle));
+            match handle {
+                None => body.push_str("<!------------------------>\n<div class=\"slide\">"),
+                _ => body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
+            }
+            handle = None;
+
+        } else if self.is_empty() | line.starts_with("#") {
+            continue
+
+        } else if self.starts_with(".image"){
+            body.push_str(close_last_handle(&handle));
+
+            let input = file_base64(trim_element(&self), "image")
+                        .expect(&format!("Arquivo apontado na linha {} não encontrado.", self_no));
+
+            body.push_str(&format!("<figure><img src=\"{}\">", input));
+            handle = Some(Handle::Image);
+
+        } else if self.starts_with(".caption"){
+            let input = trim_element(&self);
+            match handle {
+                Some(Handle::Image) => { 
+                    body.push_str(&format!("<figcaption>{}</figcaption>", input)); 
+                },
+                _ => {
+                    body.push_str(close_last_handle(&handle));
+                },
+            };
+            handle = Some(Handle::Caption);
+
+        } else if self.starts_with(".video"){
+            body.push_str(close_last_handle(&handle));
+            let input = file_base64(trim_element(&self), "video")?; 
+            body.push_str(&format!("<video controls src=\"{}\">", input));
+            handle = Some(Handle::Video);
+
+        } else if self.starts_with(".urlvideo"){
+            body.push_str(close_last_handle(&handle));
+            let input = trim_element(&self); 
+            body.push_str(&format!(
+             "<div class=\"diviframe\"><iframe src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\" >", 
+             input)
+            );
+            handle = Some(Handle::URLVideo);
+
+        } else if self.starts_with(".list"){
+            body.push_str(close_last_handle(&handle));
+            body.push_str(&format!("<ul>"));
+            handle = Some(Handle::List);
+
+        } else if self.starts_with(".ordlist"){
+            body.push_str(close_last_handle(&handle));
+            body.push_str(&format!("<ol>"));
+            handle = Some(Handle::OrdList);
+
+        } else if self.starts_with(".heading"){
+            body.push_str(close_last_handle(&handle));
+            let input = trim_element(&self);
+            body.push_str(&format!("<h1>{}", input));
+            handle = Some(Handle::Heading);
+
+        } else if self.starts_with(".subheading"){
+            body.push_str(close_last_handle(&handle));
+            body.push_str(&format!("<h2>{}", trim_element(&self)));
+            handle = Some(Handle::SubHeading);
+
+        } else if self.starts_with(".foot"){
+            foot = trim_element(&self);
+
+        } else if self.starts_with(".title"){
+            title = format!("{}", trim_element(&self));
+
+        } else if self.starts_with(".text"){
+            body.push_str(close_last_handle(&handle));
+            handle = Some(Handle::Text);
+
+        } else if self.starts_with(".script"){
+            script_path = Some(trim_element(&self));
+
+        } else if self.starts_with(".css"){
+            css_path = Some(trim_element(&self));
+
+        } else if self.starts_with(".mermaid"){
+            body.push_str(close_last_handle(&handle));
+            body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
+            handle = Some(Handle::Mermaid);
+
+        } else if self.starts_with(".logo"){
+            logo_path = Some(trim_element(&self));
+
+        } else if self.starts_with(".frommermaid"){
+            script_mermaid = Some(trim_element(&self));
+
+        } else {
+            match handle {
+                Some(Handle::Mermaid) => body.push_str(&format!("{}\n", self)),
+                Some(Handle::List) => body.push_str(&format!("<li>{}</li>", self)),
+                Some(Handle::OrdList) => body.push_str(&format!("<li>{}</li>", self)),
+                Some(Handle::Text) => body.push_str(&format!("<p>{}</p>", self)),
+                _ => body.push_str(&format!("ERROR: verifique a sintaxe deste texto: {}", self)),
+            }
+        }
+    }
 }
