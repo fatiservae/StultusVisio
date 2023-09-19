@@ -14,7 +14,7 @@
     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
     Jefferson T. @ 2023. Telegram: StalinCCCP 
 -->
-# StultusVisio 0.2.4
+# StultusVisio 0.3.0
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 
 ## Racional
