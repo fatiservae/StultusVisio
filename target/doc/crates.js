@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["lib","stultus_visio"];
+window.ALL_CRATES = ["base64","lib","stultusvisio"];

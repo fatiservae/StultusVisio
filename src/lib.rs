@@ -15,10 +15,17 @@
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
 use{
     std::{
-        fs, 
+        fs,
+        fs::write, 
         path::Path,
     },
-    base64
+    base64,
+};
+mod script;
+mod style;
+use crate::{
+    style::*,
+    script::*
 };
 
 /// Possíveis handles que indicam como a próxima linha será processada.
@@ -40,18 +47,6 @@ pub enum Handle {
     Mermaid,
 }
 
-pub struct Crawler {
-    handle: Option<Handle>,
-    body: String,
-    title: String,
-    foot: String,
-    script_path: Option<String>,
-    css_path: Option<String>,
-    logo_path: Option<String>,
-    script_mermaid: Option<String>,
-    line_no: usize,
-}
-
 /// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
     if let Some(index) = input.find(' ') {
@@ -63,7 +58,7 @@ pub fn trim_element(input: &String) -> String {
 }
 
 /// Fecha o último handle para que a tag correspondente seja propriamente encerrada.
-pub fn close_last_handle(handle: &Option<Handle>) -> &str {
+pub fn close_last_handle(handle: &Option<Handle>) -> &'static str{
     match handle {
         None => "",
         Some(Handle::Image) => "</figure>",
@@ -132,127 +127,178 @@ pub fn stv_to_html(name: &str) -> String {
     format!("{}.html", &name[..&name.len() - 4]).to_string()
 }
 
-pub trait Craw {
-    fn craw(&self, craw: Crawler); 
+/// Abstração de uma apresentação.
+pub struct Presentation {
+    pub handle: Option<Handle>,
+    pub header: String,
+    pub body: String,
+    pub footer: Option<String>,
+    pub title: Option<String>,
+    pub script_path: Option<String>,   //idealmente, Option<Path>
+    pub css_path: Option<String>,
+    pub logo_path: Option<String>,
+    pub script_mermaid: Option<String>,
 }
 
-impl Craw for Crawler {
-    fn craw(self, craw: Crawler) {
-        let mut body = craw.body;
-        let mut handle = craw.handle;
-        let mut title = craw.title;
-        let mut foot = craw.foot;
-        let mut script_path = craw.script_path;
-        let mut css_path = craw.css_path;
-        let mut logo_path = craw.logo_path;
-        let mut script_mermaid = craw.script_mermaid;
-        let mut line_no = craw.line_no;
+/// Opera sobre um tipo Presentation confeccionando o `HTLM` correspondente para cada String fornecida. 
+/// O argumento `line_no` deve ser usado para identificar linhas onde ocorrem erros durante a confecção
+/// do `HTML` correspondente. 
+pub trait Process {
+    //fn process(&mut self, line: Result<String, dyn Error>) -> Result<(), dyn Error>;
+    fn process(&mut self, line: String, line_no: usize) -> Result<(), Box<dyn std::error::Error>>;
+}
 
-        line_no = line_no + 1;
+/// Constrói o arquivo final `file.html` como método do tipo Presentation.
+/// O nome do arquivo de entrada `file` será usado para nomear a saída.
+pub trait Build {
+    fn build(self, file: String) -> Result<(), Box<dyn std::error::Error>>;
+}
 
-        if self.starts_with("---") {
-            body.push_str(close_last_handle(&handle));
-            match handle {
-                None => body.push_str("<!------------------------>\n<div class=\"slide\">"),
-                _ => body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
+impl Build for Presentation {
+    fn build(mut self, file: String) -> Result<(), Box<dyn std::error::Error>> {
+        self.body.push_str(
+            &format!("{} {} </body> {} {} </html>", 
+             match self.footer {
+                 Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
+                 None => "".to_string()},
+             generate_logo(self.logo_path),
+             generate_mermaid_script(self.script_mermaid),
+             generate_script(self.script_path)
+        ));
+
+        write(
+            stv_to_html(&file),
+            format!(
+            "<!DOCTYPE html>
+            <html lang=\"en\"> 
+              <head> 
+                <meta charset=\"UTF-8\"> <title>{}</title> 
+                {} 
+              </head> 
+              <body> 
+               <div id=\"marcador\"></div> 
+               <div id=\"popup\"> <p><span id=\"conteudo-popup\"></span></p> 
+               </div>
+            {}",
+            match self.title {Some(title) => title, None => "".to_string()},
+            generate_style(self.css_path),
+            self.body)
+        )?;
+        Ok(())
+    }
+}
+
+impl Process for Presentation {
+    fn process(&mut self, line: String, line_no: usize) -> Result<(), Box<dyn std::error::Error>> {
+   
+        if line.starts_with("---") { // considerar restringir se line.len() == 3 
+            self.body.push_str(close_last_handle(&self.handle));
+            match self.handle {
+                None => self.body.push_str("<!------------------------>\n<div class=\"slide\">"),
+                _ => self.body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
             }
-            handle = None;
+            self.handle = None;
 
-        } else if self.is_empty() | line.starts_with("#") {
-            continue
+        } else if line.is_empty() | line.starts_with("#") {
 
-        } else if self.starts_with(".image"){
-            body.push_str(close_last_handle(&handle));
+        } else if line.starts_with(".image"){
+            self.body.push_str(close_last_handle(&self.handle));
 
-            let input = file_base64(trim_element(&self), "image")
-                        .expect(&format!("Arquivo apontado na linha {} não encontrado.", self_no));
+            let input = file_base64(trim_element(&line), "image")
+                        .expect(&format!("Arquivo apontado na linha {} não encontrado.", line_no));
 
-            body.push_str(&format!("<figure><img src=\"{}\">", input));
-            handle = Some(Handle::Image);
+            self.body.push_str(&format!("<figure><img src=\"{}\">", input));
+            self.handle = Some(Handle::Image);
 
-        } else if self.starts_with(".caption"){
-            let input = trim_element(&self);
-            match handle {
+        } else if line.starts_with(".caption"){
+            let input = trim_element(&line);
+            match self.handle {
                 Some(Handle::Image) => { 
-                    body.push_str(&format!("<figcaption>{}</figcaption>", input)); 
+                    self.body.push_str(&format!("<figcaption>{}</figcaption>", input)); 
                 },
+                // pode ser aberto para outro Handle etc.
                 _ => {
-                    body.push_str(close_last_handle(&handle));
+                    self.body.push_str(close_last_handle(&self.handle));
                 },
             };
-            handle = Some(Handle::Caption);
+            self.handle = Some(Handle::Caption);
 
-        } else if self.starts_with(".video"){
-            body.push_str(close_last_handle(&handle));
-            let input = file_base64(trim_element(&self), "video")?; 
-            body.push_str(&format!("<video controls src=\"{}\">", input));
-            handle = Some(Handle::Video);
+        } else if line.starts_with(".video"){
+            self.body.push_str(close_last_handle(&self.handle));
+            let input = file_base64(trim_element(&line), "video")?; 
+            self.body.push_str(&format!("<video controls src=\"{}\">", input));
+            self.handle = Some(Handle::Video);
 
-        } else if self.starts_with(".urlvideo"){
-            body.push_str(close_last_handle(&handle));
-            let input = trim_element(&self); 
-            body.push_str(&format!(
+        } else if line.starts_with(".urlvideo"){
+            self.body.push_str(close_last_handle(&self.handle));
+            let input = trim_element(&line); 
+            self.body.push_str(&format!(
              "<div class=\"diviframe\"><iframe src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\" >", 
              input)
             );
-            handle = Some(Handle::URLVideo);
+            self.handle = Some(Handle::URLVideo);
 
-        } else if self.starts_with(".list"){
-            body.push_str(close_last_handle(&handle));
-            body.push_str(&format!("<ul>"));
-            handle = Some(Handle::List);
+        } else if line.starts_with(".list"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(&format!("<ul>"));
+            self.handle = Some(Handle::List);
 
-        } else if self.starts_with(".ordlist"){
-            body.push_str(close_last_handle(&handle));
-            body.push_str(&format!("<ol>"));
-            handle = Some(Handle::OrdList);
+        } else if line.starts_with(".ordlist"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(&format!("<ol>"));
+            self.handle = Some(Handle::OrdList);
 
-        } else if self.starts_with(".heading"){
-            body.push_str(close_last_handle(&handle));
-            let input = trim_element(&self);
-            body.push_str(&format!("<h1>{}", input));
-            handle = Some(Handle::Heading);
+        } else if line.starts_with(".heading"){
+            self.body.push_str(close_last_handle(&self.handle));
+            let input = trim_element(&line);
+            self.body.push_str(&format!("<h1>{}", input));
+            self.handle = Some(Handle::Heading);
 
-        } else if self.starts_with(".subheading"){
-            body.push_str(close_last_handle(&handle));
-            body.push_str(&format!("<h2>{}", trim_element(&self)));
-            handle = Some(Handle::SubHeading);
+        } else if line.starts_with(".subheading"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(&format!("<h2>{}", trim_element(&line)));
+            self.handle = Some(Handle::SubHeading);
 
-        } else if self.starts_with(".foot"){
-            foot = trim_element(&self);
+        } else if line.starts_with(".foot"){
+            self.footer = Some(trim_element(&line));
+            // incluir todo format do footer!
 
-        } else if self.starts_with(".title"){
-            title = format!("{}", trim_element(&self));
+        } else if line.starts_with(".title"){
+            self.title = Some(format!("{}", trim_element(&line)));
+            // incluir todo format do title
 
-        } else if self.starts_with(".text"){
-            body.push_str(close_last_handle(&handle));
-            handle = Some(Handle::Text);
+        } else if line.starts_with(".text"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.handle = Some(Handle::Text);
+            // field que ainda não foi implementado
 
-        } else if self.starts_with(".script"){
-            script_path = Some(trim_element(&self));
+        } else if line.starts_with(".script"){
+            self.script_path = Some(trim_element(&line));
 
-        } else if self.starts_with(".css"){
-            css_path = Some(trim_element(&self));
+        } else if line.starts_with(".css"){
+            self.css_path = Some(trim_element(&line));
 
-        } else if self.starts_with(".mermaid"){
-            body.push_str(close_last_handle(&handle));
-            body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
-            handle = Some(Handle::Mermaid);
+        } else if line.starts_with(".mermaid"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
+            self.handle = Some(Handle::Mermaid);
 
-        } else if self.starts_with(".logo"){
-            logo_path = Some(trim_element(&self));
+        } else if line.starts_with(".logo"){
+            self.logo_path = Some(trim_element(&line));
 
-        } else if self.starts_with(".frommermaid"){
-            script_mermaid = Some(trim_element(&self));
+        } else if line.starts_with(".frommermaid"){
+            self.script_mermaid = Some(trim_element(&line));
 
-        } else {
-            match handle {
-                Some(Handle::Mermaid) => body.push_str(&format!("{}\n", self)),
-                Some(Handle::List) => body.push_str(&format!("<li>{}</li>", self)),
-                Some(Handle::OrdList) => body.push_str(&format!("<li>{}</li>", self)),
-                Some(Handle::Text) => body.push_str(&format!("<p>{}</p>", self)),
-                _ => body.push_str(&format!("ERROR: verifique a sintaxe deste texto: {}", self)),
+        } else { //ausentes as âncoras
+            match self.handle {
+                Some(Handle::Mermaid) => self.body.push_str(&format!("{}\n", line)),
+                Some(Handle::List) => self.body.push_str(&format!("<li>{}</li>", line)),
+                Some(Handle::OrdList) => self.body.push_str(&format!("<li>{}</li>", line)),
+                Some(Handle::Text) => self.body.push_str(&format!("<p>{}</p>", line)),
+                _ => self.body.push_str(&format!("ERROR: verifique a sintaxe deste texto: {}", line)),
             }
         }
+
+        Ok(())
     }
 }
