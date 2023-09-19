@@ -117,7 +117,7 @@ Em qualquer navegador, escolha modo `landscape` e em opções avançadas, desmar
 Imprima na opção `Salvar para PDF`.
 
 ## Tasks e devesenvolvimento
-[Documentação](./target/doc/stultus_visio/index.html)
+[Documentação](./target/doc/stultusvisio/index.html)
 
 - [x] básico de uso geral.
 - [x] marcador circular.
