@@ -18,7 +18,7 @@
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 
 ## Exemplo
-[Minha_apresentacao.html](./minha_apresentacao.html) 
+[Minha_apresentacao.html](./Exemplo/minha_apresentacao.html) 
 
 ## Racional
 Todos atuais softwares de apresentação de slides são **péssimos**.
