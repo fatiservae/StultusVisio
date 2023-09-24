@@ -21,8 +21,8 @@ use{
     },
     base64,
 };
-mod script;
-mod style;
+pub mod script;
+pub mod style;
 use crate::{
     style::*,
     script::*
@@ -30,21 +30,40 @@ use crate::{
 
 /// Possíveis handles que indicam como a próxima linha será processada.
 ///
-/// TODO: Idealmente, `main()` deveria ser feita idiomaticamente por 
-/// métodos que confiram o valor de Handle e ofereçam a confecção adequada 
-/// do HTML correspondente ou devolva um erro verboso. Comportamentos 
-/// adaptativos também podem ser ofertados. 
+/// Na struct `Presentation` o elemento `handle` recebe a enumeração 
+/// correspondente de acordo com a última âncora indicada.
 pub enum Handle {
+    /// Indica legendas. 
+    ///
+    /// Necessita operar sobre uma linha prévia que aceita legendas, 
+    /// e.g. `Handle::Image`.
     Caption,
+    /// Indica elemento `<figure>`.
     Image,
+    /// Indica elemento `<video>`.
     Video,
+    /// Indica elemento `<video>` construída a partir de URL.
     URLVideo,
+    /// TODO.
     Text,
+    /// Indica elemento `<h1>`.
     Heading,
+    /// Indica elemento `<h2>`.
     SubHeading,
+    /// Indica início do elemento `<ul>` e que os próximos elementos a serem lidos 
+    /// são `<li>` caso mantenham `Handle::List`.
     List,
+    /// Indica início do elemento `<ol>` e que os próximos elementos a serem lidos 
+    /// são `<li>` caso mantenham `Handle::OrdList`.
     OrdList,
+    /// Indica as próximas linhas como linhas literais de instruções Mermaid.
+    ///
+    /// [Mermaid](https://mermaid.js.org/)
     Mermaid,
+    /// Indica o construtor de `HTML` a partir de texto literal em `Markdown`.
+    ///
+    /// A API utilziada é [markdown](https://crates.io/crates/markdown) disponível em crates.io.
+    Table(usize)
 }
 
 /// Remove a âncora da linha que a contém.
@@ -71,6 +90,7 @@ pub fn close_last_handle(handle: &Option<Handle>) -> &'static str{
         Some(Handle::SubHeading) => "</h2>",
         Some(Handle::Video) => "</video>",
         Some(Handle::URLVideo) => "</iframe></div>",
+        Some(Handle::Table(_x)) => "</table>" 
     }
 }
 
@@ -79,15 +99,16 @@ pub fn file_base64(file: String, tipo: &str) -> Result<String, Box<dyn std::erro
     let file_data = fs::read(file.clone())
                         .expect("Arquivo de mídia não encontrado para converter em base64");
 
-    let teste = file.clone();
-    
-    let file_extension = Path::new(&teste)
+    Ok(format!("data:{}/{};base64,{}", 
+            tipo, 
+            Path::new(&file.clone())
                         .extension()
                         .expect(&format!("Erro ao determinar o tipo de arquivo de: {}", &file))
                         .to_str()
                         .ok_or(&format!("Erro ao converter o caminho de {} para string.", &file))
-                        .expect(&format!("Erro ao validar {} como caminho de arquivo", &file));
-    Ok(format!("data:{}/{};base64,{}", tipo, file_extension, base64::encode(&file_data)))
+                        .expect(&format!("Erro ao validar {} como caminho de arquivo", &file)),
+            base64::encode(&file_data)
+    ))
 }
 
 /// Fornece um script padrão para as âncoras `.mermaid` ou aceita um apontamento 
@@ -111,9 +132,10 @@ pub fn generate_logo(logo_path: Option<String>) -> String {
     }
 }
 
-/// Valida o arquivo de entrada como um stv válido. Atualmente, apenas checka se o arquivo 
-/// é um .stv. 
-//  TODO: adicionar capacidade de verificar sintaxe.
+/// Valida o arquivo de entrada como um stv válido. Atualmente, apenas checka se 
+/// o arquivo é um .stv. 
+///
+/// TODO: adicionar capacidade de verificar sintaxe.
 pub fn validate_stv(name: &str) -> Result<bool, ()> {
     if name.ends_with(".stv") {
         Ok(true)
@@ -189,17 +211,23 @@ impl Build for Presentation {
 }
 
 impl Process for Presentation {
+    /// Método que opera sobre `Presentation` e recebe String como argumento e 
+    /// sintetiza o `HTML` correspondente.
+    ///
+    /// O argumento `line_no` indica número de linha para correto apontamento
+    /// de erros.
     fn process(&mut self, line: String, line_no: usize) -> Result<(), Box<dyn std::error::Error>> {
-   
-        if line.starts_with("---") { // considerar restringir se line.len() == 3 
+        if line.is_empty() | line.starts_with("#") | (line.starts_with("---")&&line.len()>3){
+            // nada
+        }
+
+        else if line.starts_with("---") { // considerar restringir se line.len() == 3 
             self.body.push_str(close_last_handle(&self.handle));
             match self.handle {
                 None => self.body.push_str("<!------------------------>\n<div class=\"slide\">"),
                 _ => self.body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
             }
             self.handle = None;
-
-        } else if line.is_empty() | line.starts_with("#") {
 
         } else if line.starts_with(".image"){
             self.body.push_str(close_last_handle(&self.handle));
@@ -270,7 +298,6 @@ impl Process for Presentation {
         } else if line.starts_with(".text"){
             self.body.push_str(close_last_handle(&self.handle));
             self.handle = Some(Handle::Text);
-            // field que ainda não foi implementado
 
         } else if line.starts_with(".script"){
             self.script_path = Some(trim_element(&line));
@@ -283,22 +310,49 @@ impl Process for Presentation {
             self.body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
             self.handle = Some(Handle::Mermaid);
 
-        } else if line.starts_with(".logo"){
-            self.logo_path = Some(trim_element(&line));
-
         } else if line.starts_with(".frommermaid"){
             self.script_mermaid = Some(trim_element(&line));
 
-        } else { //ausentes as âncoras
+        } else if line.starts_with(".logo"){
+            self.logo_path = Some(trim_element(&line));
+
+        } else if line.starts_with(".table"){
+            self.body.push_str(close_last_handle(&self.handle));
+            self.handle = Some(Handle::Table(0));
+
+        } else { // se nenhuma âncora existe, tratar o texto
+                 // de forma literal de acordo com o respectivo
+                 // Handler.
             match self.handle {
                 Some(Handle::Mermaid) => self.body.push_str(&format!("{}\n", line)),
                 Some(Handle::List) => self.body.push_str(&format!("<li>{}</li>", line)),
                 Some(Handle::OrdList) => self.body.push_str(&format!("<li>{}</li>", line)),
                 Some(Handle::Text) => self.body.push_str(&format!("<p>{}</p>", line)),
+                Some(Handle::Table(mut x)) => {
+                    self.body.push_str(&table_generator(&line, x));
+                    x = x + 1;
+                    self.handle = Some(Handle::Table(x))
+                },
                 _ => self.body.push_str(&format!("ERROR: verifique a sintaxe deste texto: {}", line)),
             }
         }
 
         Ok(())
+    }
+}
+
+/// Processa linhas como `rows` de uma table em `HTML`. 
+///
+/// O argumento `x: usize` é a carga da variante `Handle::Table(x)`. Para informar
+/// o compilador de que a primeira linha se trata do cabeçalho '<th>' da tabela,
+/// este valor é iniciado como `0`.  Este valor é incrementado em toda linha de tabela
+/// processada, sendo útil na manipulação de erros ou formatação condicional de linhas. 
+pub fn table_generator(line: &String, x: usize) -> String {
+    match x { 
+        // x pode ser condicionado aqui.
+        0 => format!("<table> <tr><th>{}</th></tr>",
+                    line.replace("|", "</th><th>")),
+        _ => format!("<tr><td>{}</td></tr>",
+                    line.replace("|", "</td><td>")),
     }
 }

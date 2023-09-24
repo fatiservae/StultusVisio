@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["Handle"],"fn":["close_last_handle","file_base64","generate_logo","generate_mermaid_script","stv_to_html","trim_element","validate_stv"],"struct":["Presentation"],"trait":["Build","Process"]};
+window.SIDEBAR_ITEMS = {"enum":["Handle"],"fn":["close_last_handle","file_base64","generate_logo","generate_mermaid_script","stv_to_html","table_generator","trim_element","validate_stv"],"mod":["script","style"],"struct":["Presentation"],"trait":["Build","Process"]};

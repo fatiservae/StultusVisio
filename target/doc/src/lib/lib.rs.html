@@ -302,6 +302,60 @@
 <a href="#302" id="302">302</a>
 <a href="#303" id="303">303</a>
 <a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
 </pre></div><pre class="rust"><code><span class="comment">//    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify
@@ -325,8 +379,8 @@
     },
     base64,
 };
-<span class="kw">mod </span>script;
-<span class="kw">mod </span>style;
+<span class="kw">pub mod </span>script;
+<span class="kw">pub mod </span>style;
 <span class="kw">use crate</span>::{
     style::<span class="kw-2">*</span>,
     script::*
@@ -334,21 +388,40 @@
 
 <span class="doccomment">/// Possíveis handles que indicam como a próxima linha será processada.
 ///
-/// TODO: Idealmente, `main()` deveria ser feita idiomaticamente por 
-/// métodos que confiram o valor de Handle e ofereçam a confecção adequada 
-/// do HTML correspondente ou devolva um erro verboso. Comportamentos 
-/// adaptativos também podem ser ofertados. 
+/// Na struct `Presentation` o elemento `handle` recebe a enumeração 
+/// correspondente de acordo com a última âncora indicada.
 </span><span class="kw">pub enum </span>Handle {
-    Caption,
-    Image,
-    Video,
-    URLVideo,
-    Text,
-    Heading,
-    SubHeading,
-    List,
-    OrdList,
-    Mermaid,
+    <span class="doccomment">/// Indica legendas. 
+    ///
+    /// Necessita operar sobre uma linha prévia que aceita legendas, 
+    /// e.g. `Handle::Image`.
+    </span>Caption,
+    <span class="doccomment">/// Indica elemento `&lt;figure&gt;`.
+    </span>Image,
+    <span class="doccomment">/// Indica elemento `&lt;video&gt;`.
+    </span>Video,
+    <span class="doccomment">/// Indica elemento `&lt;video&gt;` construída a partir de URL.
+    </span>URLVideo,
+    <span class="doccomment">/// TODO.
+    </span>Text,
+    <span class="doccomment">/// Indica elemento `&lt;h1&gt;`.
+    </span>Heading,
+    <span class="doccomment">/// Indica elemento `&lt;h2&gt;`.
+    </span>SubHeading,
+    <span class="doccomment">/// Indica início do elemento `&lt;ul&gt;` e que os próximos elementos a serem lidos 
+    /// são `&lt;li&gt;` caso mantenham `Handle::List`.
+    </span>List,
+    <span class="doccomment">/// Indica início do elemento `&lt;ol&gt;` e que os próximos elementos a serem lidos 
+    /// são `&lt;li&gt;` caso mantenham `Handle::OrdList`.
+    </span>OrdList,
+    <span class="doccomment">/// Indica as próximas linhas como linhas literais de instruções Mermaid.
+    ///
+    /// [Mermaid](https://mermaid.js.org/)
+    </span>Mermaid,
+    <span class="doccomment">/// Indica o construtor de `HTML` a partir de texto literal em `Markdown`.
+    ///
+    /// A API utilziada é [markdown](https://crates.io/crates/markdown) disponível em crates.io.
+    </span>Table(usize)
 }
 
 <span class="doccomment">/// Remove a âncora da linha que a contém.
@@ -375,7 +448,8 @@
         <span class="prelude-val">Some</span>(Handle::SubHeading) =&gt; <span class="string">&quot;&lt;/h2&gt;&quot;</span>,
         <span class="prelude-val">Some</span>(Handle::Video) =&gt; <span class="string">&quot;&lt;/video&gt;&quot;</span>,
         <span class="prelude-val">Some</span>(Handle::URLVideo) =&gt; <span class="string">&quot;&lt;/iframe&gt;&lt;/div&gt;&quot;</span>,
-    }
+        <span class="prelude-val">Some</span>(Handle::Table(_x)) =&gt; <span class="string">&quot;&lt;/table&gt;&quot; 
+    </span>}
 }
 
 <span class="doccomment">/// Converte arquivo apontado para base64 e incorpora o `raw data` no HTML final.
@@ -383,15 +457,16 @@
     <span class="kw">let </span>file_data = fs::read(file.clone())
                         .expect(<span class="string">&quot;Arquivo de mídia não encontrado para converter em base64&quot;</span>);
 
-    <span class="kw">let </span>teste = file.clone();
-    
-    <span class="kw">let </span>file_extension = Path::new(<span class="kw-2">&amp;</span>teste)
+    <span class="prelude-val">Ok</span>(<span class="macro">format!</span>(<span class="string">&quot;data:{}/{};base64,{}&quot;</span>, 
+            tipo, 
+            Path::new(<span class="kw-2">&amp;</span>file.clone())
                         .extension()
                         .expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Erro ao determinar o tipo de arquivo de: {}&quot;</span>, <span class="kw-2">&amp;</span>file))
                         .to_str()
                         .ok_or(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Erro ao converter o caminho de {} para string.&quot;</span>, <span class="kw-2">&amp;</span>file))
-                        .expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Erro ao validar {} como caminho de arquivo&quot;</span>, <span class="kw-2">&amp;</span>file));
-    <span class="prelude-val">Ok</span>(<span class="macro">format!</span>(<span class="string">&quot;data:{}/{};base64,{}&quot;</span>, tipo, file_extension, base64::encode(<span class="kw-2">&amp;</span>file_data)))
+                        .expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Erro ao validar {} como caminho de arquivo&quot;</span>, <span class="kw-2">&amp;</span>file)),
+            base64::encode(<span class="kw-2">&amp;</span>file_data)
+    ))
 }
 
 <span class="doccomment">/// Fornece um script padrão para as âncoras `.mermaid` ou aceita um apontamento 
@@ -415,9 +490,10 @@
     }
 }
 
-<span class="doccomment">/// Valida o arquivo de entrada como um stv válido. Atualmente, apenas checka se o arquivo 
-/// é um .stv. 
-</span><span class="comment">//  TODO: adicionar capacidade de verificar sintaxe.
+<span class="doccomment">/// Valida o arquivo de entrada como um stv válido. Atualmente, apenas checka se 
+/// o arquivo é um .stv. 
+///
+/// TODO: adicionar capacidade de verificar sintaxe.
 </span><span class="kw">pub fn </span>validate_stv(name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;bool, ()&gt; {
     <span class="kw">if </span>name.ends_with(<span class="string">&quot;.stv&quot;</span>) {
         <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
@@ -493,17 +569,23 @@
 }
 
 <span class="kw">impl </span>Process <span class="kw">for </span>Presentation {
-    <span class="kw">fn </span>process(<span class="kw-2">&amp;mut </span><span class="self">self</span>, line: String, line_no: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
-   
-        <span class="kw">if </span>line.starts_with(<span class="string">&quot;---&quot;</span>) { <span class="comment">// considerar restringir se line.len() == 3 
+    <span class="doccomment">/// Método que opera sobre `Presentation` e recebe String como argumento e 
+    /// sintetiza o `HTML` correspondente.
+    ///
+    /// O argumento `line_no` indica número de linha para correto apontamento
+    /// de erros.
+    </span><span class="kw">fn </span>process(<span class="kw-2">&amp;mut </span><span class="self">self</span>, line: String, line_no: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
+        <span class="kw">if </span>line.is_empty() | line.starts_with(<span class="string">&quot;#&quot;</span>) | (line.starts_with(<span class="string">&quot;---&quot;</span>)&amp;&amp;line.len()&gt;<span class="number">3</span>){
+            <span class="comment">// nada
+        </span>}
+
+        <span class="kw">else if </span>line.starts_with(<span class="string">&quot;---&quot;</span>) { <span class="comment">// considerar restringir se line.len() == 3 
             </span><span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
             <span class="kw">match </span><span class="self">self</span>.handle {
                 <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.body.push_str(<span class="string">&quot;&lt;!------------------------&gt;\n&lt;div class=\&quot;slide\&quot;&gt;&quot;</span>),
                 <span class="kw">_ </span>=&gt; <span class="self">self</span>.body.push_str(<span class="string">&quot;&lt;/div&gt;&lt;!------------------------&gt;\n&lt;div class=\&quot;slide\&quot;&gt;&quot;</span>),
             }
             <span class="self">self</span>.handle = <span class="prelude-val">None</span>;
-
-        } <span class="kw">else if </span>line.is_empty() | line.starts_with(<span class="string">&quot;#&quot;</span>) {
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.image&quot;</span>){
             <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
@@ -574,9 +656,8 @@
         </span>} <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.text&quot;</span>){
             <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Text);
-            <span class="comment">// field que ainda não foi implementado
 
-        </span>} <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.script&quot;</span>){
+        } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.script&quot;</span>){
             <span class="self">self</span>.script_path = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.css&quot;</span>){
@@ -587,23 +668,50 @@
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;div class=\&quot;center\&quot;&gt; &lt;pre class=\&quot;mermaid\&quot;&gt;&quot;</span>));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Mermaid);
 
-        } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.logo&quot;</span>){
-            <span class="self">self</span>.logo_path = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
-
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.frommermaid&quot;</span>){
             <span class="self">self</span>.script_mermaid = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
 
-        } <span class="kw">else </span>{ <span class="comment">//ausentes as âncoras
+        } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.logo&quot;</span>){
+            <span class="self">self</span>.logo_path = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
+
+        } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.table&quot;</span>){
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Table(<span class="number">0</span>));
+
+        } <span class="kw">else </span>{ <span class="comment">// se nenhuma âncora existe, tratar o texto
+                 // de forma literal de acordo com o respectivo
+                 // Handler.
             </span><span class="kw">match </span><span class="self">self</span>.handle {
                 <span class="prelude-val">Some</span>(Handle::Mermaid) =&gt; <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{}\n&quot;</span>, line)),
                 <span class="prelude-val">Some</span>(Handle::List) =&gt; <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;li&gt;{}&lt;/li&gt;&quot;</span>, line)),
                 <span class="prelude-val">Some</span>(Handle::OrdList) =&gt; <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;li&gt;{}&lt;/li&gt;&quot;</span>, line)),
                 <span class="prelude-val">Some</span>(Handle::Text) =&gt; <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;p&gt;{}&lt;/p&gt;&quot;</span>, line)),
+                <span class="prelude-val">Some</span>(Handle::Table(<span class="kw-2">mut </span>x)) =&gt; {
+                    <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span>table_generator(<span class="kw-2">&amp;</span>line, x));
+                    x = x + <span class="number">1</span>;
+                    <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Table(x))
+                },
                 <span class="kw">_ </span>=&gt; <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;ERROR: verifique a sintaxe deste texto: {}&quot;</span>, line)),
             }
         }
 
         <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="doccomment">/// Processa linhas como `rows` de uma table em `HTML`. 
+///
+/// O argumento `x: usize` é a carga da variante `Handle::Table(x)`. Para informar
+/// o compilador de que a primeira linha se trata do cabeçalho &#39;&lt;th&gt;&#39; da tabela,
+/// este valor é iniciado como `0`.  Este valor é incrementado em toda linha de tabela
+/// processada, sendo útil na manipulação de erros ou formatação condicional de linhas. 
+</span><span class="kw">pub fn </span>table_generator(line: <span class="kw-2">&amp;</span>String, x: usize) -&gt; String {
+    <span class="kw">match </span>x { 
+        <span class="comment">// x pode ser condicionado aqui.
+        </span><span class="number">0 </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;&lt;table&gt; &lt;tr&gt;&lt;th&gt;{}&lt;/th&gt;&lt;/tr&gt;&quot;</span>,
+                    line.replace(<span class="string">&quot;|&quot;</span>, <span class="string">&quot;&lt;/th&gt;&lt;th&gt;&quot;</span>)),
+        <span class="kw">_ </span>=&gt; <span class="macro">format!</span>(<span class="string">&quot;&lt;tr&gt;&lt;td&gt;{}&lt;/td&gt;&lt;/tr&gt;&quot;</span>,
+                    line.replace(<span class="string">&quot;|&quot;</span>, <span class="string">&quot;&lt;/td&gt;&lt;td&gt;&quot;</span>)),
     }
 }
 </code></pre></div></section></main></body></html>

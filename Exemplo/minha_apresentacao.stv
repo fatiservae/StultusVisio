@@ -1,0 +1,75 @@
+.title Apresentação
+.foot Um rodapé @ 2023
+.logo ./Images/logo.png
+.css ../Config/style.css
+.script ../Config/script.js
+.frommermaid https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs
+
+---
+.heading Exemplo de lista simples
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+
+---
+.heading Duas listas curtas paralelas
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+.list
+Primeiro item;
+Segundo item;
+Um terceiro;
+Um quarto;
+Finalmente o último.
+
+---
+.heading Faça listas longas...
+.subheading ...em um slide separado
+.ordlist
+Este exemplo é de uma lista ordenada.
+Esta frase é propositalmente mais longa e conta com vírgulas, pontos e exclamação! Longa o suficiente para exibir a quebra de linha.
+
+---
+.image ./Images/exemplo.jpg
+.caption Uma legenda para imagem, 2020.
+
+---
+.video ./Videos/example.mp4
+
+---
+.heading Exemplo de fluxograma em mermaid
+.mermaid
+graph TD 
+A --- B
+B-->C[fa:fa-ban Fim]
+B-->D(fa:fa-spinner);
+C-->A
+
+---
+.table
+Primeira coluna | Segunda | Última
+1 | 2 | 3
+Terceira linha e segunda após a head. | A coluna do meio. | Coluna final.
+
+---
+.table
+Tabela simples||
+1|2|3
+2|3|5
+00|00|00
+
+---
+.urlvideo https://www.youtube.com/embed/F0lowv3DyfI?si=tzXa2XTlIQDgKza4
+
+---
+.heading Fim
+.list
+Sob licença GNU Public Licence version 3.
+By Jefferson T. 2023

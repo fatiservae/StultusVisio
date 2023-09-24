@@ -14,6 +14,8 @@
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
 
+//! Confecciona um script padrão ou retorna de um arquivo externo indicado pela âncora `.script`.
+
 /// Cria um script em JavaScript para compilação, podendo ser apontado por `.script` como 
 /// arquivo personalizado ou, caso inexista o apontamento, entrega um padrão.
 ///

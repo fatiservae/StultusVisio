@@ -14,8 +14,11 @@
     along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
     Jefferson T. @ 2023. Telegram: StalinCCCP 
 -->
-# StultusVisio 0.3.0
+# StultusVisio 0.3.1
 Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
+
+## Exemplo
+[Minha_apresentacao.html](./minha_apresentacao.html) 
 
 ## Racional
 Todos atuais softwares de apresentação de slides são **péssimos**.
@@ -63,6 +66,12 @@ B-->D(fa:fa-spinner);
 C-->A
 
 ---
+.table
+Coluna 1 | Coluna 2 | Coluna 3
+Item 1 | Item 2 | Item 3
+Última 1 | Última 2 | Última 3
+
+---
 .heading Um exemplo de lista ordenada.
 .ordlist
 Primeiro item numerado.
@@ -78,12 +87,12 @@ Compile o StultusVisio:
 $ cargo build --release 
 ```
 
-Mova o binário para $PATH ou execute stultus_visio no mesmo diretório do arquvio `minha_apresentacao.stv`, por exemplo:
+Mova o binário para seu `$PATH` ou execute `stultus_visio` no mesmo diretório do arquvio `minha_apresentacao.stv`, por exemplo:
 ```
 $ ./target/stultus_visio minha_apresentacao.stv
 ```
 
-A apresentação [minha_apresentacao.html](./minha_apresentacao.html) será criada no mesmo diretório.
+A apresentação será criada no mesmo diretório.
 
 Abra-a em qualquer navegador web.
 
@@ -123,10 +132,10 @@ Imprima na opção `Salvar para PDF`.
 - [x] marcador circular.
 - [x] controles vim-like.
 - [x] implementar opção STDIN file.
+- [x] implementar tabelas.
 - [ ] marcador do tipo desenho.
 - [ ] zoom ad-hoc do slide atual.
-- [ ] carrossel de imagens em único slide.
-- [ ] incluir arquivos diretos de fontes.
+- [ ] incluir arquivos de fontes.
 
 ## Licença
 GNU GPL v.3

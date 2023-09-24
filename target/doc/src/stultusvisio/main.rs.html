@@ -51,38 +51,34 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
-<a href="#54" id="54">54</a>
-<a href="#55" id="55">55</a>
-</pre></div><pre class="rust"><code><span class="comment">////    This file is part of StultusVisio.
-////
-////    StultusVisio is free software: you can redistribute it and/or modify
-////    it under the terms of the GNU General Public License as published by
-////    the Free Software Foundation, either version 3 of the License, or
-////    (at your option) any later version.
-////
-////    StultusVisio is distributed in the hope that it will be useful,
-////    but WITHOUT ANY WARRANTY; without even the implied warranty of
-////    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-////    GNU General Public License for more details.
-////
-////    You should have received a copy of the GNU General Public License
-////    along with StultusVisio.  If not, see &lt;https://www.gnu.org/licenses/&gt;6.
-////    Jefferson T. @ 2023. Telegram: StalinCCCP
-
-</span><span class="kw">use </span>std::{
+</pre></div><pre class="rust"><code><span class="comment">//    This file is part of StultusVisio.
+//
+//    StultusVisio is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    StultusVisio is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with StultusVisio.  If not, see &lt;https://www.gnu.org/licenses/&gt;6.
+//    Jefferson T. @ 2023. Telegram: StalinCCCP
+</span><span class="kw">use </span>lib::<span class="kw-2">*</span>;
+<span class="kw">use </span>std::{
     env,
     fs::File, 
     io::{BufRead, BufReader},
     error::Error
 };
-<span class="kw">use </span>lib::<span class="kw-2">*</span>;
-<span class="kw">use </span>lib::Presentation <span class="kw">as </span>Presentation;
 
 <span class="kw">fn </span>main() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>Error&gt;&gt; {
     <span class="kw">let </span>files: Vec&lt;String&gt; = env::args().collect();
 
     <span class="kw">for </span>file <span class="kw">in </span>files.into_iter().skip(<span class="number">1</span>){
-        <span class="kw">let </span><span class="kw-2">mut </span>presentation = Presentation {
+        <span class="kw">let </span><span class="kw-2">mut </span>presentation = lib::Presentation {
                 body: String::new(),
                 handle: <span class="prelude-val">None</span>,
                 header: String::new(),
