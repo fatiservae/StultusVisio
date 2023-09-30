@@ -356,6 +356,7 @@
 <a href="#356" id="356">356</a>
 <a href="#357" id="357">357</a>
 <a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
 </pre></div><pre class="rust"><code><span class="comment">//    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify
@@ -390,6 +391,7 @@
 ///
 /// Na struct `Presentation` o elemento `handle` recebe a enumeração 
 /// correspondente de acordo com a última âncora indicada.
+</span><span class="attr">#[derive(Clone, Copy)]
 </span><span class="kw">pub enum </span>Handle {
     <span class="doccomment">/// Indica legendas. 
     ///
@@ -426,16 +428,16 @@
 
 <span class="doccomment">/// Remove a âncora da linha que a contém.
 </span><span class="kw">pub fn </span>trim_element(input: <span class="kw-2">&amp;</span>String) -&gt; String {
-    <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = input.find(<span class="string">&#39; &#39;</span>) {
-        <span class="kw">let </span>cut_string = input[index + <span class="number">1</span>..].to_string();
-        cut_string
-    } <span class="kw">else </span>{
-        input.to_string() <span class="comment">//isso deve ser um erro!
-    </span>}
-}
+    input[input.find(<span class="string">&#39; &#39;</span>).unwrap() + <span class="number">1</span>..].to_string() 
+    <span class="comment">//if let Some(index) = input.find(&#39; &#39;) {
+    //    input[index + 1..].to_string()
+    //} else {
+    //    input.to_string() //isso deve ser um erro!
+    //}
+</span>}
 
 <span class="doccomment">/// Fecha o último handle para que a tag correspondente seja propriamente encerrada.
-</span><span class="kw">pub fn </span>close_last_handle(handle: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;Handle&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str{
+</span><span class="kw">pub fn </span>close_last_handle(handle: <span class="prelude-ty">Option</span>&lt;Handle&gt;) -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str{
     <span class="kw">match </span>handle {
         <span class="prelude-val">None </span>=&gt; <span class="string">&quot;&quot;</span>,
         <span class="prelude-val">Some</span>(Handle::Image) =&gt; <span class="string">&quot;&lt;/figure&gt;&quot;</span>,
@@ -580,7 +582,7 @@
         </span>}
 
         <span class="kw">else if </span>line.starts_with(<span class="string">&quot;---&quot;</span>) { <span class="comment">// considerar restringir se line.len() == 3 
-            </span><span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            </span><span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="kw">match </span><span class="self">self</span>.handle {
                 <span class="prelude-val">None </span>=&gt; <span class="self">self</span>.body.push_str(<span class="string">&quot;&lt;!------------------------&gt;\n&lt;div class=\&quot;slide\&quot;&gt;&quot;</span>),
                 <span class="kw">_ </span>=&gt; <span class="self">self</span>.body.push_str(<span class="string">&quot;&lt;/div&gt;&lt;!------------------------&gt;\n&lt;div class=\&quot;slide\&quot;&gt;&quot;</span>),
@@ -588,7 +590,7 @@
             <span class="self">self</span>.handle = <span class="prelude-val">None</span>;
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.image&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
 
             <span class="kw">let </span>input = file_base64(trim_element(<span class="kw-2">&amp;</span>line), <span class="string">&quot;image&quot;</span>)
                         .expect(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Arquivo apontado na linha {} não encontrado.&quot;</span>, line_no));
@@ -604,19 +606,19 @@
                 },
                 <span class="comment">// pode ser aberto para outro Handle etc.
                 </span><span class="kw">_ </span>=&gt; {
-                    <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+                    <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
                 },
             };
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Caption);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.video&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="kw">let </span>input = file_base64(trim_element(<span class="kw-2">&amp;</span>line), <span class="string">&quot;video&quot;</span>)<span class="question-mark">?</span>; 
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;video controls src=\&quot;{}\&quot;&gt;&quot;</span>, input));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Video);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.urlvideo&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="kw">let </span>input = trim_element(<span class="kw-2">&amp;</span>line); 
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(
              <span class="string">&quot;&lt;div class=\&quot;diviframe\&quot;&gt;&lt;iframe src=\&quot;{}\&quot; frameborder=\&quot;0\&quot; allowfullscreen=\&quot;true\&quot; &gt;&quot;</span>, 
@@ -625,23 +627,23 @@
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::URLVideo);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.list&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;ul&gt;&quot;</span>));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::List);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.ordlist&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;ol&gt;&quot;</span>));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::OrdList);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.heading&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="kw">let </span>input = trim_element(<span class="kw-2">&amp;</span>line);
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;h1&gt;{}&quot;</span>, input));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Heading);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.subheading&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;h2&gt;{}&quot;</span>, trim_element(<span class="kw-2">&amp;</span>line)));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::SubHeading);
 
@@ -654,7 +656,7 @@
             <span class="comment">// incluir todo format do title
 
         </span>} <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.text&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Text);
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.script&quot;</span>){
@@ -664,7 +666,7 @@
             <span class="self">self</span>.css_path = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.mermaid&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.body.push_str(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;&lt;div class=\&quot;center\&quot;&gt; &lt;pre class=\&quot;mermaid\&quot;&gt;&quot;</span>));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Mermaid);
 
@@ -675,7 +677,7 @@
             <span class="self">self</span>.logo_path = <span class="prelude-val">Some</span>(trim_element(<span class="kw-2">&amp;</span>line));
 
         } <span class="kw">else if </span>line.starts_with(<span class="string">&quot;.table&quot;</span>){
-            <span class="self">self</span>.body.push_str(close_last_handle(<span class="kw-2">&amp;</span><span class="self">self</span>.handle));
+            <span class="self">self</span>.body.push_str(close_last_handle(<span class="self">self</span>.handle));
             <span class="self">self</span>.handle = <span class="prelude-val">Some</span>(Handle::Table(<span class="number">0</span>));
 
         } <span class="kw">else </span>{ <span class="comment">// se nenhuma âncora existe, tratar o texto

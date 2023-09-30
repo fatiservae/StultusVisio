@@ -32,6 +32,7 @@ use crate::{
 ///
 /// Na struct `Presentation` o elemento `handle` recebe a enumeração 
 /// correspondente de acordo com a última âncora indicada.
+#[derive(Clone, Copy)]
 pub enum Handle {
     /// Indica legendas. 
     ///
@@ -68,16 +69,16 @@ pub enum Handle {
 
 /// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
-    if let Some(index) = input.find(' ') {
-        let cut_string = input[index + 1..].to_string();
-        cut_string
-    } else {
-        input.to_string() //isso deve ser um erro!
-    }
+    input[input.find(' ').unwrap() + 1..].to_string() 
+    //if let Some(index) = input.find(' ') {
+    //    input[index + 1..].to_string()
+    //} else {
+    //    input.to_string() //isso deve ser um erro!
+    //}
 }
 
 /// Fecha o último handle para que a tag correspondente seja propriamente encerrada.
-pub fn close_last_handle(handle: &Option<Handle>) -> &'static str{
+pub fn close_last_handle(handle: Option<Handle>) -> &'static str{
     match handle {
         None => "",
         Some(Handle::Image) => "</figure>",
@@ -222,7 +223,7 @@ impl Process for Presentation {
         }
 
         else if line.starts_with("---") { // considerar restringir se line.len() == 3 
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             match self.handle {
                 None => self.body.push_str("<!------------------------>\n<div class=\"slide\">"),
                 _ => self.body.push_str("</div><!------------------------>\n<div class=\"slide\">"),
@@ -230,7 +231,7 @@ impl Process for Presentation {
             self.handle = None;
 
         } else if line.starts_with(".image"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
 
             let input = file_base64(trim_element(&line), "image")
                         .expect(&format!("Arquivo apontado na linha {} não encontrado.", line_no));
@@ -246,19 +247,19 @@ impl Process for Presentation {
                 },
                 // pode ser aberto para outro Handle etc.
                 _ => {
-                    self.body.push_str(close_last_handle(&self.handle));
+                    self.body.push_str(close_last_handle(self.handle));
                 },
             };
             self.handle = Some(Handle::Caption);
 
         } else if line.starts_with(".video"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             let input = file_base64(trim_element(&line), "video")?; 
             self.body.push_str(&format!("<video controls src=\"{}\">", input));
             self.handle = Some(Handle::Video);
 
         } else if line.starts_with(".urlvideo"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             let input = trim_element(&line); 
             self.body.push_str(&format!(
              "<div class=\"diviframe\"><iframe src=\"{}\" frameborder=\"0\" allowfullscreen=\"true\" >", 
@@ -267,23 +268,23 @@ impl Process for Presentation {
             self.handle = Some(Handle::URLVideo);
 
         } else if line.starts_with(".list"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.body.push_str(&format!("<ul>"));
             self.handle = Some(Handle::List);
 
         } else if line.starts_with(".ordlist"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.body.push_str(&format!("<ol>"));
             self.handle = Some(Handle::OrdList);
 
         } else if line.starts_with(".heading"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             let input = trim_element(&line);
             self.body.push_str(&format!("<h1>{}", input));
             self.handle = Some(Handle::Heading);
 
         } else if line.starts_with(".subheading"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.body.push_str(&format!("<h2>{}", trim_element(&line)));
             self.handle = Some(Handle::SubHeading);
 
@@ -296,7 +297,7 @@ impl Process for Presentation {
             // incluir todo format do title
 
         } else if line.starts_with(".text"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.handle = Some(Handle::Text);
 
         } else if line.starts_with(".script"){
@@ -306,7 +307,7 @@ impl Process for Presentation {
             self.css_path = Some(trim_element(&line));
 
         } else if line.starts_with(".mermaid"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.body.push_str(&format!("<div class=\"center\"> <pre class=\"mermaid\">"));
             self.handle = Some(Handle::Mermaid);
 
@@ -317,7 +318,7 @@ impl Process for Presentation {
             self.logo_path = Some(trim_element(&line));
 
         } else if line.starts_with(".table"){
-            self.body.push_str(close_last_handle(&self.handle));
+            self.body.push_str(close_last_handle(self.handle));
             self.handle = Some(Handle::Table(0));
 
         } else { // se nenhuma âncora existe, tratar o texto

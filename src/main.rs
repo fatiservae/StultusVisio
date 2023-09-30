@@ -38,13 +38,17 @@ fn main() -> Result<(), Box<dyn Error>> {
         };
 
         let mut line_no = 0;
-        BufReader::new(File::open(file.clone())?).lines().for_each(|line|{
-            let _ = match line { // não interessa o resultado, o BufReader falha com erro próprio.
-                Ok(line) => presentation.process(line, line_no),
-                Err(_error) => todo!() 
-            };
-            line_no = line_no + 1;
-        });
+        BufReader::new(File::open(file.clone())?)
+            .lines()
+            .for_each(|line|{
+                // não interessa o resultado
+                // o BufReader falha com erro próprio.
+                let _ = match line {
+                    Ok(line) => presentation.process(line, line_no),
+                    Err(_error) => todo!() 
+                };
+                line_no = line_no + 1;
+            });
 
         presentation.build(file)?
 

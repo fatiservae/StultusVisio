@@ -51,6 +51,10 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
 </pre></div><pre class="rust"><code><span class="comment">//    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify
@@ -91,13 +95,17 @@
         };
 
         <span class="kw">let </span><span class="kw-2">mut </span>line_no = <span class="number">0</span>;
-        BufReader::new(File::open(file.clone())<span class="question-mark">?</span>).lines().for_each(|line|{
-            <span class="kw">let _ </span>= <span class="kw">match </span>line { <span class="comment">// não interessa o resultado, o BufReader falha com erro próprio.
-                </span><span class="prelude-val">Ok</span>(line) =&gt; presentation.process(line, line_no),
-                <span class="prelude-val">Err</span>(_error) =&gt; <span class="macro">todo!</span>() 
-            };
-            line_no = line_no + <span class="number">1</span>;
-        });
+        BufReader::new(File::open(file.clone())<span class="question-mark">?</span>)
+            .lines()
+            .for_each(|line|{
+                <span class="comment">// não interessa o resultado
+                // o BufReader falha com erro próprio.
+                </span><span class="kw">let _ </span>= <span class="kw">match </span>line {
+                    <span class="prelude-val">Ok</span>(line) =&gt; presentation.process(line, line_no),
+                    <span class="prelude-val">Err</span>(_error) =&gt; <span class="macro">todo!</span>() 
+                };
+                line_no = line_no + <span class="number">1</span>;
+            });
 
         presentation.build(file)<span class="question-mark">?
 
