@@ -16,7 +16,7 @@
 use lib::*;
 use std::{
     env,
-    fs::File, 
+    fs::File,
     io::{BufRead, BufReader},
     error::Error
 };
