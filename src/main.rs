@@ -1,3 +1,47 @@
+//    Jefferson T. @ 2023. Telegram: StalinCCCP
+//    Licença no fim. Licence at the end.
+
+use lib::*;
+use std::{
+  env,
+  error::Error,
+  fs::File,
+  io::{BufRead, BufReader},
+};
+
+fn main() -> Result<(), Box<dyn Error>> {
+  let files: Vec<String> = env::args().collect();
+
+  for file in files.into_iter().skip(1) {
+    let mut presentation = lib::Presentation {
+      body: String::new(),
+      handle: None,
+      header: String::new(),
+      title: Some(String::new()),
+      footer: Some(String::new()),
+      script_path: None,
+      css_path: None,
+      logo_path: None,
+      script_mermaid: None,
+    };
+
+    let mut line_no = 0;
+    BufReader::new(File::open(file.clone())?)
+      .lines()
+      .for_each(|line| {
+        // não interessa o resultado
+        // o BufReader falha com erro próprio.
+        let _ = match line {
+          Ok(line) => presentation.process(line, line_no),
+          Err(_error) => todo!(),
+        };
+        line_no = line_no + 1;
+      });
+    presentation.build(file)?
+  }
+  Ok(())
+}
+
 //    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify
@@ -12,46 +56,4 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
-//    Jefferson T. @ 2023. Telegram: StalinCCCP
-use lib::*;
-use std::{
-    env,
-    fs::File,
-    io::{BufRead, BufReader},
-    error::Error
-};
 
-fn main() -> Result<(), Box<dyn Error>> {
-    let files: Vec<String> = env::args().collect();
-
-    for file in files.into_iter().skip(1){
-        let mut presentation = lib::Presentation {
-                body: String::new(),
-                handle: None,
-                header: String::new(),
-                title: Some(String::new()),
-                footer: Some(String::new()),
-                script_path: None,
-                css_path: None,
-                logo_path: None,
-                script_mermaid: None,
-        };
-
-        let mut line_no = 0;
-        BufReader::new(File::open(file.clone())?)
-            .lines()
-            .for_each(|line|{
-                // não interessa o resultado
-                // o BufReader falha com erro próprio.
-                let _ = match line {
-                    Ok(line) => presentation.process(line, line_no),
-                    Err(_error) => todo!() 
-                };
-                line_no = line_no + 1;
-            });
-
-        presentation.build(file)?
-
-    }
-    Ok(())
-}

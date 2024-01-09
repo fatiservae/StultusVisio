@@ -1,18 +1,6 @@
-//    This file is part of StultusVisio.
-//
-//    StultusVisio is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    StultusVisio is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
+//    Licença no fim. Licence at the end.
+
 use{
     std::{
         fs,
@@ -84,8 +72,8 @@ pub fn close_last_handle(handle: Option<Handle>) -> &'static str{
         Some(Handle::Image) => "</figure>",
         Some(Handle::Mermaid) => "</pre></div>",
         Some(Handle::Caption) => "</figure>",
-        Some(Handle::List) => "</ul>",
-        Some(Handle::OrdList) => "</ol>",
+        Some(Handle::List) => "</ul></div>",
+        Some(Handle::OrdList) => "</ol></div>",
         Some(Handle::Text) => "</p>",
         Some(Handle::Heading) => "</h1>",
         Some(Handle::SubHeading) => "</h2>",
@@ -180,7 +168,7 @@ pub trait Build {
 impl Build for Presentation {
     fn build(mut self, file: String) -> Result<(), Box<dyn std::error::Error>> {
         self.body.push_str(
-            &format!("{} {} </body> {} {} </html>", 
+            &format!("</div>{} {} </body> {} {} </html>", 
              match self.footer {
                  Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
                  None => "".to_string()},
@@ -267,16 +255,42 @@ impl Process for Presentation {
             );
             self.handle = Some(Handle::URLVideo);
 
+        // As listas vão depender de um pré-compilador
+        // que aglutine as âncoras .list e/ou .ordlist
         } else if line.starts_with(".list"){
-            self.body.push_str(close_last_handle(self.handle));
-            self.body.push_str(&format!("<ul>"));
-            self.handle = Some(Handle::List);
-
+            match self.handle {
+                Some(Handle::List) => {
+                    self.body.push_str(&format!("</ul>"));
+                    self.body.push_str(&format!("<ul>"));
+                },
+                Some(Handle::OrdList) => {
+                    self.body.push_str(&format!("</ol>"));
+                    self.body.push_str(&format!("<ul>"));
+                },
+                _ => {
+                    self.body.push_str(close_last_handle(self.handle));
+                    self.body.push_str(&format!("<div class=\"listas\"><ul>"));
+                    self.handle = Some(Handle::List);
+                }
+            };
+            
         } else if line.starts_with(".ordlist"){
-            self.body.push_str(close_last_handle(self.handle));
-            self.body.push_str(&format!("<ol>"));
-            self.handle = Some(Handle::OrdList);
-
+            match self.handle {
+                Some(Handle::List) => {
+                    self.body.push_str(&format!("</ul>"));
+                    self.body.push_str(&format!("<ol>"));
+                },
+                Some(Handle::OrdList) => {
+                    self.body.push_str(&format!("</ol>"));
+                    self.body.push_str(&format!("<ol>"));
+                },
+                _ => {
+                    self.body.push_str(close_last_handle(self.handle));
+                    self.body.push_str(&format!("<div class=\"listas\"><ol>"));
+                    self.handle = Some(Handle::OrdList);
+                }
+            };
+ 
         } else if line.starts_with(".heading"){
             self.body.push_str(close_last_handle(self.handle));
             let input = trim_element(&line);
@@ -357,3 +371,18 @@ pub fn table_generator(line: &String, x: usize) -> String {
                     line.replace("|", "</td><td>")),
     }
 }
+//    This file is part of StultusVisio.
+//
+//    StultusVisio is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    StultusVisio is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
+
