@@ -1,3 +1,233 @@
+//  Jefferson T. @StalinCCCP - 2024.
+
+//! Confecciona um CSS padrão ou retorna de um arquivo externo indicado pela âncora `.css`.
+
+/// Cria um estilo padrão de CSS para compilação quando no arquivo de entrada 
+/// não for apresentado uma âncora do tipo `.style` apontando para um arquivo 
+/// personalizado de CSS. 
+///
+/// O estilo padrão define comportamento de zoom, ajuste à página, estilo de 
+/// fontes e outros.
+pub fn generate_style(css_path: Option<String>) -> String {
+    match css_path {
+        Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
+        None => r#"
+          <style>
+          /* Licença no fim - Licence at the end */
+          /* Jefferson T. 2024*/
+          /* @stalincccp */
+          
+          body {
+            text-align: justify;
+            font-family: "Fira Sans", 'Lato', sans-serif;
+            /* Importante zerar todas bordas */
+            border: 0px;
+            margin: 0px !important;
+            padding: 0px !important;
+            display: block;
+            font-size: 24px;
+          } 
+          
+          #popup {
+            display: block;
+            position: fixed;
+            top: 1em;
+            left: 1em;
+            color: black;
+            background-color: rgba(200, 225, 255, 0.90); 
+            padding: 20px;
+            border: 3px solid #000;
+            border-radius: 5px;
+            z-index: +100;
+          }
+          #popup td, tr, th {
+            text-align: left;
+            padding-right: 2em;
+          }
+          #popup h1{
+            text-align: center;
+          }
+          #popup h2{
+            text-align: center;
+          }
+          #popup p{
+            text-align: center;
+          }
+          
+          img {
+            /*
+            flex-grow: 1;
+            */
+            max-width: 100%;
+            max-height: 90%;
+            border-radius: 7px;
+          }
+          figcaption {
+            color: black;
+            font: italic smaller sans-serif;
+            padding: 3px;
+            text-align: center;
+          }
+          
+          .slide {
+            /*
+            width: 100vw;
+            slide-break-after: always;
+            slide-break-before: always;
+            break-after: always;
+            */
+            align-items: center;
+            flex-direction: column;
+            justify-content: center;
+            display: flex;
+            align-items: space-between;
+            height: 95vh;
+            overflow: hidden;
+          }
+          .slide p {
+            padding: 1em;
+          }
+          .slide h1 {
+            /* 
+            */
+          }
+          .slide h2 {
+            /* 
+            */
+          }
+          .slide h1, h2, h3 {
+            /*
+            display: grid;
+            align-items: center; 
+            justify-content: center; 
+            */
+            text-align: center;
+            margin: 0;
+            padding-top: clamp(2%, 2vw, 80%);
+            padding-right: 1vw;
+            padding-left: 1vw;
+            max-height: 100%; 
+            overflow-y: auto; 
+          }
+          .slide video {
+            width: 98vw;
+            height: 98vh;
+            object-fit: contain;
+            padding-top: 1vh;
+            padding-bottom: 1vh;
+            padding-right: 1vw;
+            padding-left: 1vw;
+          }
+          .slide th {
+            background-color: gray;
+            border: 1px solid;
+            text-align: center;
+            padding: 8px;
+          }
+          .slide td {
+            border: 1px solid;
+            padding: 8px;
+            text-align: left;
+          }
+          .slide table {
+            max-width: 90vw;
+            margin: 0 auto;
+            margin-top: 30vh;
+            border-collapse: collapse;
+          }
+          
+          .center {
+            display: grid;
+            justify-content: center;
+            align-items: center;
+          }
+          
+          .diviframe {
+            width: 80vw;
+            height: 80vh;
+            padding-top: 10vh;
+            padding-bottom: 10vh;
+            padding-right: 10vw;
+            padding-left: 10vw;
+          }
+          
+          iframe {
+            width: 100%;
+            height: 100%;
+          }
+          
+          .logo {
+            position: absolute;
+            right: 3px;
+            top: 3px;
+            width: 9%;
+            height: auto;
+            z-index: +100;
+          }
+          
+          footer {
+            position: fixed;
+            font-size: 50%;
+            background-color: rgba(200, 225, 255, 0.5); 
+            left: 3rem;
+            padding-right: 1em;
+            padding-left: 1em;
+            max-width: 50vw;
+            bottom: 0;
+            text-align: center;
+            border-top: 2px solid #0060ab;
+            color: black;
+          }
+          
+          #marcador {
+           position: absolute;
+           width: 80px;
+           height: 80px;
+           border-radius: 50%;
+           background-color: transparent;
+           display: none; 
+           border: 8px solid rgba(55, 0, 200, 1); 
+           z-index: 9999; 
+          }
+          
+          /* LISTAS */
+          .listas {
+            text-align: start;
+            margin-left: auto;
+            margin-right: auto;
+            gap: 1em;
+            display: flex;
+            max-width: 90vw;
+          }
+          .listas ul, 
+          .list ol {
+            font-weight: normal;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 10vw;
+          }
+          
+          .mermaidTooltip {
+            display: none;
+          }
+          
+          div.images {
+            /*
+            flex: 1;
+            */
+            display: inline-flex;
+            align-content: center;
+            justify-content: center;
+            overflow: hidden;
+            max-width: 100vw;
+            max-height: 100vh;
+            align-items: center;
+          }
+          
+          </style>"#.to_string(),
+    }
+}
+
 //    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify
@@ -13,245 +243,3 @@
 //    You should have received a copy of the GNU General Public License
 //    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
 //    Jefferson T. @ 2023. Telegram: StalinCCCP
-
-//! Confecciona um CSS padrão ou retorna de um arquivo externo indicado pela âncora `.css`.
-
-/// Cria um estilo padrão de CSS para compilação quando no arquivo de entrada 
-/// não for apresentado uma âncora do tipo `.style` apontando para um arquivo 
-/// personalizado de CSS. 
-///
-/// O estilo padrão define comportamento de zoom, ajuste à página, estilo de 
-/// fontes e outros.
-pub fn generate_style(css_path: Option<String>) -> String {
-    match css_path {
-        Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
-        None => r#"
-<style>
-body {
-  display:grid;
-  margin: 0 !important;
-  padding: 0 !important;
-  max-width: 90vw;
-  border: none;
-  font-family: Heveltica, 'SFPro', sans-serif;
-  font-size: clamp(1em, 2em, 5em);
-  /*font-size: 16px;*/
-  text-align: justify;
-}
-
-#popup {
-  font-size: clamp(10%, 40%, 60%);
-  display: block;
-  position: fixed;
-  top: 1em;
-  left: 1em;
-  color: black;
-  background-color: rgba(200, 225, 255, 0.85);
-  padding: 20px;
-  border: 3px solid #000;
-  border-radius: 5px;
-  z-index: +100;
-}
-
-#popup td, tr, th {
-  text-align: left;
-  padding-right: 2em;
-}
-
-#popup h1{
-  text-align: center;
-  font-size: 2vw;
-}
-
-#popup h2{
-  text-align: center;
-  font-size: 1vw;
-}
-
-#popup p{
-  text-align: center;
-  font-size: .8vw;
-}
-
-.slide {
-  font-size: 5vw;
-  position: relative;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 95vh;
-  max-height: 90vh; !important
-  slide-break-after: always;
-  slide-break-before: always;
-  break-after: always;
-}
-
-.slide p {
-  padding: 1em;
-}
-
-.slide h1 {
-  font-size: clamp(1vw, 1.5vw + 1rem, 3.5vw);
-}
-
-.slide h2 {
-  font-size: clamp(1vw, 1vw + 1rem, 3vw);
-}
-
-.slide h1, h2, h3 {
-  padding-top: clamp(2%, 2vw, 80%);
-  padding-right: 1vw;
-  padding-left: 1vw;
-  max-height: 100%; /* Define a altura máxima igual à altura do elemento pai */
-  overflow-y: auto; /* Adiciona uma barra de rolagem vertical quando necessário */
-  display: grid;
-  align-items: center; /* Centraliza verticalmente */
-  justify-content: center; /* Centraliza horizontalmente */
-}
-
-.slide ol, ul {
-  font-size: clamp(.5vw, 1vw + 1rem, 3vw);
-  padding-top: clamp(1px, 1em, 10%);
-  padding-left: clamp(1%, 20%, 80%);
-  padding-right: clamp(1px, 5%, 50%);
-  display: inline-grid;
-}
-
-.slide figure {
-  object-fit: contain;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: clamp(40vh, 80%, 95vh);
-  max-width: 100%;
-  max-height: 100%;
-  border-radius: 10px 10px 10px 10px;
-}
-
-.slide figure figcaption {
-/*  text-shadow: 2px 2px 4px rgba(3, 3, 3, 0.5);*/
-  position: relative;
-  bottom: 0em;
-  text-align: right;
-  padding-right: 20%;
-  font-size: clamp(.5vw, 1vw, 2vw);
-}
-
-.slide figure img {
-  object-fit: contain;
-  max-width: 100%;
-  max-height: 100%;
-  object-position: 50% 50%;
-  border-radius: 10px 10px 10px 10px;
-}
-
-.slide img {
-  border-radius: 10px 10px 10px 10px;
-}
-
-.slide video {
-  width: 98vw;
-  height: 98vh;
-  object-fit: contain;
-  padding-top: 1vh;
-  padding-bottom: 1vh;
-  padding-right: 1vw;
-  padding-left: 1vw;
-}
-
-.slide th {
-  font-size: clamp(0.2rem, 1vw + .3rem, 3rem);
-  background-color: gray;
-  border: 1px solid;
-  text-align: center;
-  padding: 8px;
-}
-
-.slide td {
-  font-size: clamp(0.2rem, 1vw + .3rem, 3rem);
-  border: 1px solid;
-  padding: 8px;
-  text-align: left;
-}
-
-.slide table {
-/*
-  width: min(30%, 50vw);
-  height: min(30%, 50vh);
-  object-fit: contain;
-  padding-top: 20vh;
-  padding-bottom: 20vh;
-  padding-right: 20vw;
-  padding-left: 20vw;
-  padding: 30em;
-*/
-  max-width: 90vw;
-  margin: 0 auto;
-  margin-top: 30vh;
-  border-collapse: collapse;
-}
-
-.center {
-  display: grid;
-  justify-content: center;
-  align-items: center;
-  /*height: 100vh;  Adjust to your needs */
-}
-
-.diviframe {
-  width: 80vw;
-  height: 80vh;
-  padding-top: 10vh;
-  padding-bottom: 10vh;
-  padding-right: 10vw;
-  padding-left: 10vw;
-}
-
-iframe {
-  width: 100%;
-  height: 100%;
-}
-
-.logo {
-  position: absolute;
-  right: 3px;
-  top: 3px;
-  width: 9%;
-  height: auto;
-  z-index: +100;
-}
-
-footer {
-  position: fixed;
-  font-size: .5rem;
-  background-color: rgba(200, 225, 255, 0.5);
-  right: 65vw;
-  left: 3rem;
-  bottom: 0;
-  text-align: center;
-  border-top: 2px solid green;
-  color: black;
-}
-
-/*
-.titulo {
-  padding-top: 10vh;
-  color: black;
-  text-shadow: 2px 2px 4px rgba(250, 250, 250, 3.5);
-}
-*/
-
-#marcador {
- position: absolute;
- width: 80px;
- height: 80px;
- border-radius: 50%;
- background-color: transparent;
- display: none; /* Oculta o círculo inicialmente*/
- border: 8px solid rgba(55, 0, 200, 1); /* Cor da cobertura translúcida */
- z-index: 9999; /* Coloca o círculo acima de outros elementos */
-}
-
-</style>"#.to_string(),
-    }
-}

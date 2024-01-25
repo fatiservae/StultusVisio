@@ -57,7 +57,8 @@ pub enum Handle {
 
 /// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
-    input[input.find(' ').unwrap() + 1..].to_string() 
+    // precisa de controle de no. de linha e lidar com o erro
+    input[input.find(' ').unwrap() + 1..].to_string()  
     //if let Some(index) = input.find(' ') {
     //    input[index + 1..].to_string()
     //} else {
@@ -69,9 +70,9 @@ pub fn trim_element(input: &String) -> String {
 pub fn close_last_handle(handle: Option<Handle>) -> &'static str{
     match handle {
         None => "",
-        Some(Handle::Image) => "</figure>",
+        Some(Handle::Image) => "</figure></div>",
         Some(Handle::Mermaid) => "</pre></div>",
-        Some(Handle::Caption) => "</figure>",
+        Some(Handle::Caption) => "</figure></div>",
         Some(Handle::List) => "</ul></div>",
         Some(Handle::OrdList) => "</ol></div>",
         Some(Handle::Text) => "</p>",
@@ -91,11 +92,11 @@ pub fn file_base64(file: String, tipo: &str) -> Result<String, Box<dyn std::erro
     Ok(format!("data:{}/{};base64,{}", 
             tipo, 
             Path::new(&file.clone())
-                        .extension()
-                        .expect(&format!("Erro ao determinar o tipo de arquivo de: {}", &file))
-                        .to_str()
-                        .ok_or(&format!("Erro ao converter o caminho de {} para string.", &file))
-                        .expect(&format!("Erro ao validar {} como caminho de arquivo", &file)),
+                .extension()
+                .expect(&format!("Erro ao determinar o tipo de arquivo de: {}", &file))
+                .to_str()
+                .ok_or(&format!("Erro ao converter o caminho de {} para string.", &file))
+                .expect(&format!("Erro ao validar {} como caminho de arquivo", &file)),
             base64::encode(&file_data)
     ))
 }
@@ -169,28 +170,44 @@ impl Build for Presentation {
     fn build(mut self, file: String) -> Result<(), Box<dyn std::error::Error>> {
         self.body.push_str(
             &format!("</div>{} {} </body> {} {} </html>", 
-             match self.footer {
-                 Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
-                 None => "".to_string()},
-             generate_logo(self.logo_path),
-             generate_mermaid_script(self.script_mermaid),
-             generate_script(self.script_path)
-        ));
+                match self.footer {
+                    Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
+                    None => "".to_string()},
+                generate_logo(self.logo_path),
+                generate_mermaid_script(self.script_mermaid),
+                generate_script(self.script_path)
+            )
+        );
 
         write(
             stv_to_html(&file),
             format!(
-            "<!DOCTYPE html>
-            <html lang=\"en\"> 
+            r#"
+            <!DOCTYPE html>
+            <html lang="en"> 
+            <!-- Fira Sans -->
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"> 
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+            <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+            <style>
+            .katex{{
+              text-align: start !important ;
+            }}
+            </style>
+            <link rel="preconnect" href="https://fonts.googleapis.com">
+            <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+            <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
               <head> 
-                <meta charset=\"UTF-8\"> <title>{}</title> 
+                <meta name="description" content="slideshow">
+                <meta name="keywords" content="slideshow">
+                <meta charset="UTF-8"> <title>{}</title> 
                 {} 
               </head> 
               <body> 
-               <div id=\"marcador\"></div> 
-               <div id=\"popup\"> <p><span id=\"conteudo-popup\"></span></p> 
+               <div id="marcador"></div> 
+               <div id="popup"> <p><span id="conteudo-popup"></span></p> 
                </div>
-            {}",
+            {}"#,
             match self.title {Some(title) => title, None => "".to_string()},
             generate_style(self.css_path),
             self.body)
@@ -219,12 +236,20 @@ impl Process for Presentation {
             self.handle = None;
 
         } else if line.starts_with(".image"){
-            self.body.push_str(close_last_handle(self.handle));
-
             let input = file_base64(trim_element(&line), "image")
-                        .expect(&format!("Arquivo apontado na linha {} não encontrado.", line_no));
-
-            self.body.push_str(&format!("<figure><img src=\"{}\">", input));
+                .expect(&format!("Arquivo apontado na linha {} não encontrado.", line_no));
+            match self.handle {
+                Some(Handle::Image) => {
+                    self.body.push_str(&format!("</figure><figure><img src=\"{}\">", input));
+                },
+                Some(Handle::Caption) => {
+                    self.body.push_str(&format!("</figure><figure><img src=\"{}\">", input));
+                },//fechar so o figure,
+                _ => {
+                    close_last_handle(self.handle);
+                    self.body.push_str(&format!("<div class=\"images\"><figure><img src=\"{}\">", input));
+                }
+            }
             self.handle = Some(Handle::Image);
 
         } else if line.starts_with(".caption"){
@@ -329,7 +354,10 @@ impl Process for Presentation {
             self.script_mermaid = Some(trim_element(&line));
 
         } else if line.starts_with(".logo"){
-            self.logo_path = Some(trim_element(&line));
+            self.logo_path = match file_base64(trim_element(&line), "image") {
+                Ok(path) => Some(path),
+                _ => Some(String::from("Erro no processamento da logo"))
+            };
 
         } else if line.starts_with(".table"){
             self.body.push_str(close_last_handle(self.handle));
@@ -371,6 +399,8 @@ pub fn table_generator(line: &String, x: usize) -> String {
                     line.replace("|", "</td><td>")),
     }
 }
+
+//    LICENCE
 //    This file is part of StultusVisio.
 //
 //    StultusVisio is free software: you can redistribute it and/or modify

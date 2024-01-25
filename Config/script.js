@@ -6,14 +6,12 @@ const popup = document.getElementById("popup");
 const popupText = document.getElementById("conteudo-popup");
 
 function popUpShow(){
-    popupText.innerHTML = `<h1>Ajuda</h1>
+    popupText.innerHTML = `
+                 <h1>Pressione <em>"t"</em><br> para fechar ajuda</h1>
                  <h2>Slide ${currentslideIndex+1} de ${slides.length}</h2>
                  <table>
                  <tr>
                    <th>Comando</th><th>Tecla</th>
-                 </tr>
-                 <tr>
-                   <td>Ajuda</td><td>t</td>
                  </tr>
                  <tr>
                    <td>Próximo</td><td>j</td>
@@ -24,9 +22,9 @@ function popUpShow(){
                  <tr>
                    <td>Topo</td><td>gg</td>
                  <tr>
-                 </tr>
                    <td>Final</td><td>G</td>
                  </tr>
+                 <tr>
                    <td>Modo impressão</td><td>p</td>
                  </tr>
 
@@ -83,7 +81,10 @@ document.addEventListener('keydown', function(event) {
 
   else if (event.key === 'm'){toggleMovement()}
 
-  else if (isMoving && event.key === 'ArrowUp' || event.key === 'ArrowLeft' || event.key === 'ArrowDown' || event.key === 'ArrowRight') {moveCircle(event.key)}
+  else if (isMoving && event.key === 'ArrowUp' 
+    || event.key === 'ArrowLeft' 
+    || event.key === 'ArrowDown' 
+    || event.key === 'ArrowRight') {moveCircle(event.key)}
 
   else if (event.key === 'x') {resizeMarcador()}
   
@@ -93,7 +94,7 @@ document.addEventListener('keydown', function(event) {
 
   for (var i = 0; i < slides.length; i++) {
     if (i === currentslideIndex) {
-      slides[i].style.display = 'block';
+      slides[i].style.display = 'flex';
     } else {
       slides[i].style.display = 'none';
     }
@@ -112,7 +113,8 @@ function updateCirclePosition() {
 }
 
 function resizeMarcador() {
-  if (tamanhoMarcador > 250) {tamanhoMarcador = 1} else {tamanhoMarcador = tamanhoMarcador + 5};
+  if (tamanhoMarcador > 250) {tamanhoMarcador = 1} 
+  else {tamanhoMarcador = tamanhoMarcador + 5};
   circle.style.width = tamanhoMarcador + 'px';
   circle.style.height = tamanhoMarcador + 'px';
 }
@@ -160,3 +162,19 @@ function alterarTamanhoFonte() {
         console.error("Elemento 'slide' não encontrado.");
     }
 }
+
+// Executa uma tecl 'k' para iniciar layout correta
+document.addEventListener('DOMContentLoaded', function() {
+  const event = new KeyboardEvent('keydown', {
+    key: 'k',
+    keyCode: 75,
+    code: 'KeyK',
+    which: 75,
+    shiftKey: false, 
+    ctrlKey: false, 
+    altKey: false, 
+    metaKey: false, 
+  });
+  
+  document.dispatchEvent(event);
+});
