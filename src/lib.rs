@@ -58,7 +58,7 @@ pub enum Handle {
 /// Remove a âncora da linha que a contém.
 pub fn trim_element(input: &String) -> String {
     // precisa de controle de no. de linha e lidar com o erro
-    input[input.find(' ').unwrap() + 1..].to_string()  
+    input[input.find(' ').expect("Alguma âncora com argumentos falhou!") + 1..].to_string()  
     //if let Some(index) = input.find(' ') {
     //    input[index + 1..].to_string()
     //} else {
@@ -114,10 +114,21 @@ pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
     }
 }
 
-/// Aponta uma logo para ser renderizada caso exista.
+/// Aponta uma logo para ser renderizada caso exista. 
+/// Existindo, será codificada para base64 e incorporada no HTML final.
+///
+/// A logo é retornada como um elemento fixo da apresentação e, portanto, 
+/// o modo printável a retorna apenas no primeiro slide. Porém, este comportamento 
+/// é desejável porque StultusVisio é projetado para montar uma apresentação 
+/// em HTML e não um arquivo printável. 
 pub fn generate_logo(logo_path: Option<String>) -> String {
     match logo_path {
-        Some(logo_path) => format!("<img src=\"{}\" class=\"logo\">", logo_path),
+        Some(logo_path) => {
+            match file_base64(logo_path, "image") {
+                Ok(image64) => image64,
+                _ => "falhou ao converter a logo para base64".to_string()
+            }
+        },
         None => "".to_string(),
     }
 }
@@ -169,7 +180,7 @@ pub trait Build {
 impl Build for Presentation {
     fn build(mut self, file: String) -> Result<(), Box<dyn std::error::Error>> {
         self.body.push_str(
-            &format!("</div>{} {} </body> {} {} </html>", 
+            &format!("</div>{} <img src=\"{}\" class=\"logo\" /> </body> {} {} </html>", 
                 match self.footer {
                     Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
                     None => "".to_string()},
@@ -246,7 +257,7 @@ impl Process for Presentation {
                     self.body.push_str(&format!("</figure><figure><img src=\"{}\">", input));
                 },//fechar so o figure,
                 _ => {
-                    close_last_handle(self.handle);
+                    self.body.push_str(close_last_handle(self.handle));
                     self.body.push_str(&format!("<div class=\"images\"><figure><img src=\"{}\">", input));
                 }
             }
@@ -354,10 +365,7 @@ impl Process for Presentation {
             self.script_mermaid = Some(trim_element(&line));
 
         } else if line.starts_with(".logo"){
-            self.logo_path = match file_base64(trim_element(&line), "image") {
-                Ok(path) => Some(path),
-                _ => Some(String::from("Erro no processamento da logo"))
-            };
+            self.logo_path = Some(trim_element(&line));
 
         } else if line.starts_with(".table"){
             self.body.push_str(close_last_handle(self.handle));

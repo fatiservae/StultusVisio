@@ -1,20 +1,9 @@
-//    This file is part of StultusVisio.
-//
-//    StultusVisio is free software: you can redistribute it and/or modify
-//    it under the terms of the GNU General Public License as published by
-//    the Free Software Foundation, either version 3 of the License, or
-//    (at your option) any later version.
-//
-//    StultusVisio is distributed in the hope that it will be useful,
-//    but WITHOUT ANY WARRANTY; without even the implied warranty of
-//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//    GNU General Public License for more details.
-//
-//    You should have received a copy of the GNU General Public License
-//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
-//    Jefferson T. @ 2023. Telegram: StalinCCCP
+//  This file is part of StultusVisio.
+//  Licença no fim. 
+//  Licence at the end.
+use std::fs;
 
-//! Confecciona um script padrão ou retorna de um arquivo externo indicado pela âncora `.script`.
+/// Confecciona um script padrão ou retorna de um arquivo externo indicado pela âncora `.script`.
 
 /// Cria um script em JavaScript para compilação, podendo ser apontado por `.script` como 
 /// arquivo personalizado ou, caso inexista o apontamento, entrega um padrão.
@@ -22,7 +11,7 @@
 /// O script padrão define comportamentos de atalhos, transição e marcadores.
 pub fn generate_script(script_path: Option<String>) -> String {
     match script_path {
-        Some(script_path) => format!("<script src=\"{}\"></script>", script_path),
+        Some(script_path) => format!("<script>{}</script>", fs::read_to_string(script_path).expect("Verifique o javascript informado")),
         None => r#"
         <script>
 var slides = document.querySelectorAll('.slide');
@@ -208,3 +197,18 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>"#.to_string(),
     }
 }
+
+//    StultusVisio is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, either version 3 of the License, or
+//    (at your option) any later version.
+//
+//    StultusVisio is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with StultusVisio.  If not, see <https://www.gnu.org/licenses/>6.
+//    Jefferson T. @ 2023. Telegram: StalinCCCP
+

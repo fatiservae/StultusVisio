@@ -1,8 +1,11 @@
 /* Licença no fim - Licence at the end */
 /* Jefferson T. 2024*/
 /* @stalincccp */
+:root{
+}
 
 body {
+  font-size: calc(14px + (32 - 14) * ((100vw - 300px) / (1600 - 300))); /* by Mike Riethmuller */
   text-align: justify;
   font-family: "Fira Sans", 'Lato', sans-serif;
   /* Importante zerar todas bordas */
@@ -10,7 +13,6 @@ body {
   margin: 0px !important;
   padding: 0px !important;
   display: block;
-  font-size: 24px;
 } 
 
 #popup {
@@ -43,8 +45,8 @@ img {
   /*
   flex-grow: 1;
   */
-  max-width: 100%;
-  max-height: 90%;
+  max-height: 70vw;
+  max-width: 90vw;
   border-radius: 7px;
 }
 figcaption {
@@ -85,13 +87,13 @@ figcaption {
   display: grid;
   align-items: center; 
   justify-content: center; 
-  */
   text-align: center;
+  */
   margin: 0;
   padding-top: clamp(2%, 2vw, 80%);
   padding-right: 1vw;
   padding-left: 1vw;
-  max-height: 100%; 
+  max-height: 30%; 
   overflow-y: auto; 
 }
 .slide video {
@@ -115,9 +117,11 @@ figcaption {
   text-align: left;
 }
 .slide table {
-  max-width: 90vw;
+  max-width: 80vw;
+  max-height: 90vh;
+  font-size: clamp(11px, 80%, 100%);
   margin: 0 auto;
-  margin-top: 30vh;
+  margin-top: clamp(20px, 30vh, 3vw);
   border-collapse: collapse;
 }
 
@@ -180,16 +184,22 @@ footer {
   text-align: start;
   margin-left: auto;
   margin-right: auto;
-  gap: 1em;
+  gap: 10vw;
+  padding: 0px;
   display: flex;
-  max-width: 90vw;
+  max-width: 80vw;
 }
 .listas ul, 
-.list ol {
+.listas ol {
+  padding: 0px;
   font-weight: normal;
   margin-left: auto;
   margin-right: auto;
+  /*
+  font-size: clamp(1rem, 10vw, 8rem);
+  font-size: clamp(12px, 2rem, 100%);
   padding-left: 10vw;
+  */
 }
 
 .mermaidTooltip {

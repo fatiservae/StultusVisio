@@ -1,6 +1,9 @@
 //  Jefferson T. @StalinCCCP - 2024.
+//  Licença no fim. 
+//  Licence at the end.
+use std::fs;
 
-//! Confecciona um CSS padrão ou retorna de um arquivo externo indicado pela âncora `.css`.
+// Confecciona um CSS padrão ou retorna de um arquivo externo indicado pela âncora `.css`.
 
 /// Cria um estilo padrão de CSS para compilação quando no arquivo de entrada 
 /// não for apresentado uma âncora do tipo `.style` apontando para um arquivo 
@@ -8,9 +11,12 @@
 ///
 /// O estilo padrão define comportamento de zoom, ajuste à página, estilo de 
 /// fontes e outros.
+///
+/// TODO: tornar o script padrão sempre disponível, deixando estilizações extras
+/// a serem inseridas por script adicional do usuário.
 pub fn generate_style(css_path: Option<String>) -> String {
     match css_path {
-        Some(css_path) => format!("<link rel=\"stylesheet\" type=\"text/css\" href=\"{}\">", css_path),
+        Some(css_path) => format!("<style>{}</style>", fs::read_to_string(css_path).expect("Verifique o CSS informado")),
         None => r#"
           <style>
           /* Licença no fim - Licence at the end */
