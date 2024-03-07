@@ -1,9 +1,50 @@
+var startX = 0;
+var startY = 0;
+var larguraTotal = window.innerWidth;
+//var alturaTotal = window.innerHeight;
+
+document.addEventListener('touchstart', function(event) {
+    startX = event.touches[0].clientX;
+    startY = event.touches[0].clientY;
+});
+
+document.addEventListener('touchmove', function(event) {
+    event.preventDefault();
+});
+
+document.addEventListener('touchend', function(event) {
+    if (startX > larguraTotal - larguraTotal/3 || startX < larguraTotal/3 ) {
+      event.preventDefault();
+      console.log("toque fora do meio");
+    }
+
+    var deltaX = event.changedTouches[0].clientX - startX;
+    var deltaY = event.changedTouches[0].clientY - startY;
+
+    if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        if (deltaX > 0) {
+          console.log("Swipe para a direita");
+          const event = new KeyboardEvent('keydown', {
+            key: 'j',
+          });
+          document.dispatchEvent(event);
+        } else {
+          console.log("Swipe para a esquerda");
+          const event = new KeyboardEvent('keydown', {
+            key: 'k',
+          });
+          document.dispatchEvent(event);
+        }
+    } 
+});
+
 var slides = document.querySelectorAll('.slide');
 var currentslideIndex = 0;
 var n = 0;
 
 const popup = document.getElementById("popup");
 const popupText = document.getElementById("conteudo-popup");
+
 
 function popUpShow(){
     popupText.innerHTML = `
@@ -14,10 +55,10 @@ function popUpShow(){
                    <th>Comando</th><th>Tecla</th>
                  </tr>
                  <tr>
-                   <td>Próximo</td><td>j</td>
+                   <td>Próximo</td><td>j ou deslizar a direita</td>
                  </tr>
                  <tr>
-                   <td>Anterior</td><td>k</td>
+                   <td>Anterior</td><td>k ou deslizar a esquerda</td>
                  </tr>
                  <tr>
                    <td>Topo</td><td>gg</td>
@@ -29,6 +70,7 @@ function popUpShow(){
                  </tr>
 
                  </table>
+                 <p> Em dispositivos móveis, com o aparelho deitado, deslize para passar slides.</p>
                `;
 }
 popUpShow();

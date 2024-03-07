@@ -43,8 +43,8 @@ function popUpShow(){
                  <tr>
                    <td>Modo impressão</td><td>p</td>
                  </tr>
-
                  </table>
+                 <p> Em dispositivos móveis, com o aparelho deitado, deslize para passar slides.</p>
                `;
 }
 popUpShow();

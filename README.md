@@ -23,22 +23,22 @@ Slides estúpidos e fáceis, apresentáveis em qualquer _browser_.
 ## Racional
 Todos atuais softwares de apresentação de slides são **péssimos**.
 
-Um modo minimalista de construir apresentações, sem transições inúteis, modos contraproducentes como duas telas, WYSIWYG e compiladores complexos.
+Um modo minimalista de construir apresentações, sem transições inúteis, modos contraproducentes como duas telas, WYSIWYG etc.
 
 ## Filosofia e uso
 Um software simples que te obriga a montar slides coerentes.
 
-Um slide deve conter apenas um(a) imagem, vídeo ou texto. Evite inserir ambos.
+Um slide deve conter apenas um vídeo, duas images ou texto. Evite inserir ambos.
 
 Para fluxogramas, timelines, tabelas e mídias de dados organizados, use ![Mermaid](https://github.com/mermaid-js/mermaid), conforme exemplo abaixo.
 
-No diretório, crie um arquivo `minha_apresentacao.stv` e edite-o:
+Crie um arquivo como `minha_apresentacao.stv` e edite-o:
 
 ```
 .title Título da apresentação
 .foot Um rodapé.
-# Estes são comentários. 
-# As tags .script e .style apontam 
+# Estes são comentários porque começam com #. 
+# As âncoras .script e .style apontam 
 # para arquivos personalizados de 
 # configuração. São opcionais.
 .script ./Config/style.css
@@ -49,13 +49,16 @@ No diretório, crie um arquivo `minha_apresentacao.stv` e edite-o:
 .list
 Primeiro item de uma lista.
 Segundo item de uma lista.
-
+Se quiser lista ordenada, use .ordlist
 ---
 .image ./Images/exemplo.jpg
-
+# um slide com imagem
 ---
 .video ./Videos/exemplo.mp4
-
+# slide com vídeo
+---
+.urlvideo "iframe do YouTube"
+# esta âncora .urlvideo serve para integrar iframes
 ---
 .heading Exemplo de fluxograma em mermaid
 .mermaid
@@ -66,11 +69,11 @@ B-->D(fa:fa-spinner);
 C-->A
 
 ---
+.subheading Um slide com tabela
 .table
 Coluna 1 | Coluna 2 | Coluna 3
 Item 1 | Item 2 | Item 3
 Última 1 | Última 2 | Última 3
-
 ---
 .heading Um exemplo de lista ordenada.
 .ordlist
@@ -80,23 +83,13 @@ Mais um.
 Último.
 
 ```
-## Compilação, instalação e uso
-
-Compile o StultusVisio:
+No mesmo diretório do arquvio, execute o StultusVisio:
 ```
-$ cargo build --release 
+$ stultusvisio minha_apresentacao.stv
 ```
+A apresentação em `HTML` será criada no mesmo diretório, com mesmo nome do arquivo.
 
-Mova o binário para seu `$PATH` ou execute `stultus_visio` no mesmo diretório do arquvio `minha_apresentacao.stv`, por exemplo:
-```
-$ ./target/stultus_visio minha_apresentacao.stv
-```
-
-A apresentação será criada no mesmo diretório.
-
-Abra-a em qualquer navegador web.
-
-O arquivo é portável e único. Basta compartilhar o HTML em si.
+Abra-a em qualquer navegador web. O arquivo é portável e único. Basta compartilhar o HTML em si.
 
 Para personalizar estilos e comportamento, aponte para arquivos personalizados de `script.js` e `style.css`.
 
@@ -104,20 +97,21 @@ Para personalizar estilos e comportamento, aponte para arquivos personalizados d
 > Erros de sintaxe no arquivo presentation.stv são renderizados como slides com uma mensagem de erro.
 
 > [!IMPORTANT]
-> A violação da filosofia do software produz comportamento imprevisto. Não seja estúpido, apresentadores de slides não são editores de imagens. Edite-as no seu software favorito e importe-as.
+> A violação da filosofia do software produz comportamento imprevisto. 
 
 ## Controles
 
 ```
 t   :   Abra/feche a ajuda.
 j   :   Vá ao próximo slide.
-k   :   Anteceda ao slide anterior.
+k   :   Vá ao slide anterior.
 p   :   Alterne para modo printável. 
 gg  :   Vá ao primeiro slide.
 G   :   Vá ao último slide.
 m   :   Abra o marcador interativo.
 x   :   Altere tamanho do marcador.
 
+Deslize para passar slides em telas móveis com aparelho deitado.
 ```
 
 ## Salvar como PDF
