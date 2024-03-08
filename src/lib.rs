@@ -101,16 +101,22 @@ pub fn file_base64(file: String, tipo: &str) -> Result<String, Box<dyn std::erro
     ))
 }
 
-/// Fornece um script padrão para as âncoras `.mermaid` ou aceita um apontamento 
-/// feito por `.frommermaid`
+/// Fornece um script padrão para as âncoras `.mermaid` e analisa o apontamento 
+/// feito por `.frommermaid`.
+/// O script original mermaid foi criado em fevereiro de 2024, mas pode ser 
+/// apontado pela tag `.frommermaid` para versões atualizadas, conforme orientações 
+/// de https://mermaid.js.org/.
 pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
     match mermaid_script {
         Some(mermaid_script) => format!(
-                "<script type=\"module\">import mermaid from '{}';</script>", 
+                "<script type=\"module\">import mermaid from \'{}\';</script>", 
                 mermaid_script),
-        None => "<script type=\"module\">import mermaid from 
-            'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-            </script>".to_string()
+        None => {
+            let mermaid_file = String::from_utf8(include_bytes!("../Config/mermaid-00886c59.js")
+                .to_vec()).expect("Não foi possível integrar o script mermaid");
+            format!("<script type=\"module\">{};Tt.initialize({{ startOnLoad: true }});</script>", 
+                mermaid_file)
+        }
     }
 }
 
@@ -180,12 +186,11 @@ pub trait Build {
 impl Build for Presentation {
     fn build(mut self, file: String) -> Result<(), Box<dyn std::error::Error>> {
         self.body.push_str(
-            &format!("</div>{} <img src=\"{}\" class=\"logo\" /> </body> {} {} </html>", 
+            &format!("</div>{} <img src=\"{}\" class=\"logo\" /> </body> {} </html>", 
                 match self.footer {
                     Some(footer) => format!("</div><footer><p>{}</p></footer>", footer),
                     None => "".to_string()},
                 generate_logo(self.logo_path),
-                generate_mermaid_script(self.script_mermaid),
                 generate_script(self.script_path)
             )
         );
@@ -209,16 +214,18 @@ impl Build for Presentation {
             <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
             <link href="https://fonts.googleapis.com/css2?family=Fira+Sans&display=swap" rel="stylesheet">
               <head> 
+                {} 
                 <meta name="description" content="slideshow">
                 <meta name="keywords" content="slideshow">
                 <meta charset="UTF-8"> <title>{}</title> 
-                {} 
+                {}
               </head> 
               <body> 
                <div id="marcador"></div> 
                <div id="popup"> <p><span id="conteudo-popup"></span></p> 
                </div>
             {}"#,
+            generate_mermaid_script(self.script_mermaid),
             match self.title {Some(title) => title, None => "".to_string()},
             generate_style(self.css_path),
             self.body)
