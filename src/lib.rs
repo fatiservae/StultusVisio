@@ -49,9 +49,7 @@ pub enum Handle {
     ///
     /// [Mermaid](https://mermaid.js.org/)
     Mermaid,
-    /// Indica o construtor de `HTML` a partir de texto literal em `Markdown`.
-    ///
-    /// A API utilziada é [markdown](https://crates.io/crates/markdown) disponível em crates.io.
+    /// Indica um elemento <table> gerada a partir de sintaxe `HTML` em [Markdown](https://crates.io/crates/markdown) disponível em crates.io.
     Table(usize)
 }
 
@@ -111,12 +109,16 @@ pub fn generate_mermaid_script(mermaid_script: Option<String>) -> String {
         Some(mermaid_script) => format!(
                 "<script type=\"module\">import mermaid from \'{}\';</script>", 
                 mermaid_script),
+
         None => {
-            let mermaid_file = String::from_utf8(include_bytes!("../Config/mermaid-00886c59.js")
-                .to_vec()).expect("Não foi possível integrar o script mermaid");
-            format!("<script type=\"module\">{};Tt.initialize({{ startOnLoad: true }});</script>", 
-                mermaid_file)
+            format!("<script type=\"module\" src=\"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs\"></script><script>mermaid.initialize({{ startOnLoad: true }});</script>")
         }
+        //{
+        //    let mermaid_file = String::from_utf8(include_bytes!("../Config/mermaid-00886c59.js")
+        //        .to_vec()).expect("Não foi possível integrar o script mermaid");
+        //    format!("<script type=\"module\">{};Tt.initialize({{ startOnLoad: true }});</script>", 
+        //        mermaid_file)
+        //}
     }
 }
 

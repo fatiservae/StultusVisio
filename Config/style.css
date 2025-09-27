@@ -1,7 +1,7 @@
 /* Licença no fim - Licence at the end */
 /* Jefferson T. 2024*/
 /* @stalincccp */
-:root{
+:root {
   /* by Mike Riethmuller */
   /* 
   --tamanhoLetra: calc(14px + (32 - 14) * ((100vw - 300px) / (1600 - 300))); 
@@ -19,7 +19,7 @@ body {
   margin: 0px !important;
   padding: 0px !important;
   display: block;
-} 
+}
 
 
 #popup {
@@ -28,24 +28,30 @@ body {
   top: 1em;
   left: 1em;
   color: black;
-  background-color: rgba(200, 225, 255, 0.90); 
+  background-color: rgba(200, 225, 255, 0.90);
   padding: 20px;
   border: 3px solid #000;
   border-radius: 5px;
   z-index: +100;
   font-size: 90%;
 }
-#popup td, tr, th {
+
+#popup td,
+tr,
+th {
   text-align: left;
   padding-right: 2em;
 }
-#popup h1{
+
+#popup h1 {
   text-align: center;
 }
-#popup h2{
+
+#popup h2 {
   text-align: center;
 }
-#popup p{
+
+#popup p {
   text-align: center;
 }
 
@@ -53,10 +59,11 @@ img {
   /*
   flex-grow: 1;
   */
-  max-height: 70vw;
+  max-height: 60vh;
   max-width: 90vw;
   border-radius: 7px;
 }
+
 figcaption {
   color: black;
   font: italic smaller sans-serif;
@@ -80,18 +87,24 @@ figcaption {
   height: 95vh;
   overflow: hidden;
 }
+
 .slide p {
   padding: 1em;
 }
+
 .slide h1 {
   /* 
   */
 }
+
 .slide h2 {
   /* 
   */
 }
-.slide h1, h2, h3 {
+
+.slide h1,
+h2,
+h3 {
   /*
   display: grid;
   align-items: center; 
@@ -102,9 +115,10 @@ figcaption {
   padding-top: clamp(2%, 2vw, 80%);
   padding-right: 1vw;
   padding-left: 1vw;
-  max-height: 30%; 
-  overflow-y: auto; 
+  max-height: 30%;
+  overflow-y: auto;
 }
+
 .slide video {
   width: 98vw;
   height: 98vh;
@@ -114,15 +128,18 @@ figcaption {
   padding-right: 1vw;
   padding-left: 1vw;
 }
+
 .slide th {
   background-color: gray;
   text-align: center;
   padding: 8px;
 }
+
 .slide td {
   padding: 8px;
   text-align: left;
 }
+
 .slide table {
   border: 1px solid;
   max-width: 80vw;
@@ -166,7 +183,7 @@ iframe {
 footer {
   font-size: 50%;
   position: fixed;
-  background-color: rgba(200, 225, 255, 0.5); 
+  background-color: rgba(200, 225, 255, 0.5);
   left: 3rem;
   padding-right: 1em;
   padding-left: 1em;
@@ -178,14 +195,14 @@ footer {
 }
 
 #marcador {
- position: absolute;
- width: 80px;
- height: 80px;
- border-radius: 50%;
- background-color: transparent;
- display: none; 
- border: 8px solid rgba(55, 0, 200, 1); 
- z-index: 9999; 
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: transparent;
+  display: none;
+  border: 8px solid rgba(55, 0, 200, 1);
+  z-index: 9999;
 }
 
 /* LISTAS */
@@ -198,7 +215,8 @@ footer {
   display: flex;
   max-width: 80vw;
 }
-.listas ul, 
+
+.listas ul,
 .listas ol {
   padding: 0px;
   font-weight: normal;
@@ -235,10 +253,14 @@ div.images {
     font-size: clamp(10px, calc(var(--tamanhoLetra) - 3rem), 13px, 20px);
     */
   }
+
   #popup {
     font-size: 80%;
+    /*
     display: none;
+    */
   }
+
   footer {
     font-size: 60%;
   }

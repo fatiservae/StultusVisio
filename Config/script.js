@@ -15,7 +15,7 @@ document.addEventListener('touchmove', function(event) {
 document.addEventListener('touchend', function(event) {
     if (startX > larguraTotal - larguraTotal/3 || startX < larguraTotal/3 ) {
       event.preventDefault();
-      console.log("toque fora do meio");
+      //console.log("toque fora do meio");
     }
 
     var deltaX = event.changedTouches[0].clientX - startX;
@@ -23,15 +23,15 @@ document.addEventListener('touchend', function(event) {
 
     if (Math.abs(deltaX) > Math.abs(deltaY)) {
         if (deltaX > 0) {
-          console.log("Swipe para a direita");
+          //console.log("Swipe para a direita");
           const event = new KeyboardEvent('keydown', {
-            key: 'j',
+            key: 'k',
           });
           document.dispatchEvent(event);
         } else {
-          console.log("Swipe para a esquerda");
+          //console.log("Swipe para a esquerda");
           const event = new KeyboardEvent('keydown', {
-            key: 'k',
+            key: 'j',
           });
           document.dispatchEvent(event);
         }
@@ -100,10 +100,10 @@ document.addEventListener('keydown', function(event) {
      n = 0;
     }
   }
-  else if (event.key === 'p') {
-    Printar();
-    return;
-  }
+  // else if (event.key === 'p') {
+  //   Printar();
+  //   return;
+  // }
   else if (event.key === 't') {
     if (popup.style.display === 'none') {popup.style.display = "block"}
     else {popup.style.display = "none"};
